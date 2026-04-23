@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios - Defensores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            navy: '#0A192F',
+                            gold: '#D4AF37',
+                            light: '#F8FAFC',
+                            white: '#FFFFFF'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'card': '0 10px 30px -10px rgba(0,0,0,0.05)',
+                        'float': '0 20px 40px -15px rgba(0,0,0,0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+</head>
+<body class="bg-brand-light font-sans text-brand-navy min-h-screen flex overflow-hidden">
+
+    <!-- Sidebar (Mismo de dashboard.html) -->
+    <aside class="w-72 bg-white border-r border-slate-100 flex flex-col h-screen hidden md:flex shrink-0 relative z-20">
+        <div class="p-8">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-brand-navy rounded-[16px] flex items-center justify-center shadow-lg shadow-brand-navy/20">
+                    <span class="material-symbols-outlined text-brand-gold">shield</span>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-brand-navy leading-tight">Defensores</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plataforma</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-2">Menú</p>
+            <a href="/dashboard.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 rounded-2xl hover:bg-slate-50 hover:text-brand-navy transition-all group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">dashboard</span>
+                <span class="font-semibold text-sm">Dashboard</span>
+            </a>
+            <a href="/asignacion.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 rounded-2xl hover:bg-slate-50 hover:text-brand-navy transition-all group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">how_to_reg</span>
+                <span class="font-semibold text-sm">Asignación de Testigos</span>
+            </a>
+            <a href="/comision.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 rounded-2xl hover:bg-slate-50 hover:text-brand-navy transition-all group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">gavel</span>
+                <span class="font-semibold text-sm">Comisión Escrutadora</span>
+            </a>
+            <a href="/alertas.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 rounded-2xl hover:bg-slate-50 hover:text-brand-navy transition-all group">
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform">campaign</span>
+                <span class="font-semibold text-sm">Alertas y Denuncias</span>
+            </a>
+            <a href="/usuarios.html" class="flex items-center gap-3 px-4 py-3.5 bg-slate-50 text-brand-navy rounded-2xl transition-all group border border-slate-100 shadow-sm relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-gold rounded-r"></div>
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform text-brand-gold">group</span>
+                <span class="font-semibold text-sm">Gestión de Usuarios</span>
+            </a>
+        </nav>
+
+        <div class="p-6 border-t border-slate-100">
+            <div class="bg-slate-50 rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
+                <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center font-bold text-brand-navy" id="user-initial">A</div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-brand-navy truncate" id="user-name">Usuario</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate" id="user-role">Rol</p>
+                </div>
+            </div>
+            <button onclick="api.auth.logout(); window.location.href='/'" class="w-full mt-4 flex items-center gap-3 px-4 py-3 text-slate-500 rounded-2xl hover:bg-red-50 hover:text-red-600 transition-all group">
+                <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">logout</span>
+                <span class="font-semibold text-sm">Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header class="bg-white/80 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-10 px-8 py-6 flex justify-between items-center">
+            <div>
+                <div class="flex items-center gap-2 text-sm font-semibold text-slate-400 mb-1">
+                    <span class="material-symbols-outlined text-lg">home</span>
+                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                    <span>Sistema</span>
+                </div>
+                <h2 class="text-3xl font-black text-brand-navy tracking-tight">Gestión de Usuarios</h2>
+                <p class="text-slate-500 text-sm mt-1">Agrega abogados, coordinadores y digitadores al sistema.</p>
+            </div>
+            <button onclick="openModal()" class="bg-brand-navy hover:bg-slate-800 text-white font-semibold py-3 px-6 rounded-2xl transition-all shadow-lg hover:shadow-float flex items-center gap-2 group">
+                <span class="material-symbols-outlined">person_add</span>
+                <span>Nuevo Usuario</span>
+            </button>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 relative">
+            <div class="bg-white rounded-[32px] shadow-card border border-slate-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                                <th class="p-6">Usuario</th>
+                                <th class="p-6">Rol de Acceso</th>
+                                <th class="p-6">Jurisdicción</th>
+                                <th class="p-6 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usuariosTable" class="divide-y divide-slate-100 text-sm">
+                            <tr>
+                                <td colspan="4" class="p-8 text-center text-slate-400">
+                                    <span class="material-symbols-outlined animate-spin text-4xl mb-2">refresh</span>
+                                    <p>Cargando usuarios...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Nuevo Usuario -->
+    <div id="usuarioModal" class="fixed inset-0 bg-brand-navy/40 backdrop-blur-sm z-50 hidden flex items-center justify-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-[32px] shadow-2xl border border-slate-100 w-full max-w-xl overflow-hidden scale-95 transition-transform duration-300" id="modalContent">
+            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-brand-navy/5 rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-brand-navy">person_add</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-brand-navy tracking-tight">Crear Nuevo Usuario</h3>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 hover:bg-slate-200 p-2 rounded-xl transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <form id="usuarioForm" class="p-8 space-y-5">
+                <div class="grid grid-cols-2 gap-5">
+                    <div class="space-y-2 col-span-2">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
+                        <input type="text" id="nombre" required placeholder="Ej: Dr. Carlos Pérez" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-brand-navy font-semibold focus:bg-white focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Correo (Login)</label>
+                        <input type="email" id="email" required placeholder="carlos@electoral.sucre" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-brand-navy font-semibold focus:bg-white focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all">
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Contraseña</label>
+                        <input type="password" id="password" required placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-brand-navy font-semibold focus:bg-white focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all">
+                    </div>
+
+                    <div class="space-y-2 col-span-2">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Rol en el Sistema</label>
+                        <select id="rol" required onchange="checkRol()" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-brand-navy font-semibold focus:bg-white focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all appearance-none">
+                            <option value="Abogado_Juridico">Abogado Jurídico</option>
+                            <option value="Digitador">Digitador</option>
+                            <option value="Coordinador_Municipio">Coordinador de Municipio</option>
+                            <option value="SuperAdmin">Administrador Principal</option>
+                        </select>
+                    </div>
+
+                    <div class="space-y-2 col-span-2 hidden" id="municipioGroup">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Municipio Asignado</label>
+                        <select id="municipioSelect" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 px-4 text-brand-navy font-semibold focus:bg-white focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 outline-none transition-all appearance-none">
+                            <option value="">Seleccione un municipio...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="error-msg" class="hidden mt-4 text-sm font-medium text-red-500 bg-red-50 p-3 rounded-xl border border-red-100 flex items-center gap-2"></div>
+
+                <div class="pt-6 flex justify-end gap-3 border-t border-slate-100 mt-6">
+                    <button type="button" onclick="closeModal()" class="px-6 py-3.5 text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-2xl transition-colors">Cancelar</button>
+                    <button type="submit" id="btnGuardar" class="bg-brand-navy hover:bg-slate-800 text-white font-semibold py-3.5 px-8 rounded-2xl transition-all shadow-lg hover:shadow-xl flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">person_add</span>
+                        <span>Crear Usuario</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        if (!api.auth.isAuthenticated()) window.location.href = '/';
+        const user = api.auth.getUser();
+        
+        // Solo el SuperAdmin puede ver esta página
+        if (user.rol !== 'SuperAdmin') {
+            window.location.href = '/dashboard.html';
+        }
+
+        document.getElementById('user-name').textContent = user.nombre;
+        document.getElementById('user-role').textContent = user.rol.replace('_', ' ');
+        document.getElementById('user-initial').textContent = user.nombre.charAt(0).toUpperCase();
+
+        const modal = document.getElementById('usuarioModal');
+        const modalContent = document.getElementById('modalContent');
+
+        async function init() {
+            cargarMunicipios();
+            cargarUsuarios();
+        }
+
+        function checkRol() {
+            const rol = document.getElementById('rol').value;
+            const muniGroup = document.getElementById('municipioGroup');
+            if (rol === 'Coordinador_Municipio') {
+                muniGroup.classList.remove('hidden');
+                document.getElementById('municipioSelect').required = true;
+            } else {
+                muniGroup.classList.add('hidden');
+                document.getElementById('municipioSelect').required = false;
+                document.getElementById('municipioSelect').value = "";
+            }
+        }
+
+        async function cargarMunicipios() {
+            const res = await api.divipole.getMunicipios();
+            if (res.success) {
+                const select = document.getElementById('municipioSelect');
+                res.data.forEach(m => {
+                    const option = document.createElement('option');
+                    option.value = m.id;
+                    option.textContent = m.nombre;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        function getRoleBadge(rol) {
+            const colors = {
+                'SuperAdmin': 'bg-brand-navy text-white',
+                'Abogado_Juridico': 'bg-brand-gold/10 text-brand-gold border border-brand-gold/20',
+                'Coordinador_Municipio': 'bg-blue-50 text-blue-600 border border-blue-100',
+                'Digitador': 'bg-slate-100 text-slate-600 border border-slate-200',
+                'Testigo_Electoral': 'bg-green-50 text-green-600 border border-green-100'
+            };
+            return `<span class="px-3 py-1 rounded-full text-xs font-bold ${colors[rol]}">${rol.replace('_', ' ')}</span>`;
+        }
+
+        async function cargarUsuarios() {
+            const tbody = document.getElementById('usuariosTable');
+            const res = await api.usuarios.list();
+            
+            if (res.success) {
+                if(res.data.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="p-8 text-center text-slate-400">No hay usuarios</td></tr>';
+                    return;
+                }
+                
+                tbody.innerHTML = res.data.map(u => `
+                    <tr class="hover:bg-slate-50 transition-colors group">
+                        <td class="p-6">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-brand-light flex items-center justify-center text-brand-navy font-bold border border-slate-200">
+                                    ${u.nombre.charAt(0)}
+                                </div>
+                                <div>
+                                    <p class="font-bold text-brand-navy">${u.nombre}</p>
+                                    <p class="text-xs text-slate-500">${u.email}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-6">
+                            ${getRoleBadge(u.rol)}
+                        </td>
+                        <td class="p-6">
+                            <span class="text-slate-600 font-medium text-sm">
+                                ${u.municipio ? u.municipio.nombre : (u.rol === 'SuperAdmin' ? 'Nivel Departamental' : 'Nivel General')}
+                            </span>
+                        </td>
+                        <td class="p-6 text-right">
+                            ${u.id !== user.id ? `
+                            <button onclick="eliminarUsuario('${u.id}')" class="text-slate-400 hover:text-red-500 p-2 rounded-xl hover:bg-red-50 transition-colors tooltip-btn" title="Eliminar">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                            ` : '<span class="text-xs text-slate-400 font-bold bg-slate-100 px-3 py-1 rounded-lg">Tú</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        function openModal() {
+            document.getElementById('usuarioForm').reset();
+            checkRol();
+            document.getElementById('error-msg').classList.add('hidden');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        async function eliminarUsuario(id) {
+            if(confirm('¿Está seguro de eliminar este usuario?')) {
+                const res = await api.usuarios.delete(id);
+                if(res.success) {
+                    cargarUsuarios();
+                } else {
+                    alert('Error al eliminar');
+                }
+            }
+        }
+
+        document.getElementById('usuarioForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnGuardar');
+            const errorMsg = document.getElementById('error-msg');
+            
+            const data = {
+                nombre: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                rol: document.getElementById('rol').value,
+                municipio_id: document.getElementById('municipioSelect').value || null
+            };
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Guardando...';
+                
+                const res = await api.usuarios.create(data);
+                if (res.success) {
+                    closeModal();
+                    cargarUsuarios();
+                } else {
+                    errorMsg.innerHTML = `<span class="material-symbols-outlined">error</span> ${res.message || 'Error al guardar'}`;
+                    errorMsg.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorMsg.innerHTML = '<span class="material-symbols-outlined">error</span> Error de conexión';
+                errorMsg.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined text-sm">person_add</span><span>Crear Usuario</span>';
+            }
+        });
+
+        init();
+    </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0A192F">
+    <title>Portal del Testigo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { navy: '#0A192F', gold: '#D4AF37', light: '#F8FAFC' }
+                    },
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    boxShadow: { 'card': '0 10px 30px -10px rgba(0,0,0,0.05)' }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+    <style>
+        body { -webkit-tap-highlight-color: transparent; }
+    </style>
+</head>
+<body class="bg-brand-light font-sans text-brand-navy min-h-screen flex flex-col">
+
+    <!-- Header Móvil -->
+    <header class="bg-brand-navy text-white px-6 py-5 flex justify-between items-center sticky top-0 z-20 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+                <span class="material-symbols-outlined text-brand-gold">how_to_reg</span>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold leading-tight">Portal Testigo</h1>
+                <p class="text-[10px] uppercase tracking-widest text-brand-gold font-bold" id="userName">Cargando...</p>
+            </div>
+        </div>
+        <button onclick="logout()" class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+            <span class="material-symbols-outlined">logout</span>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-6 space-y-6 overflow-y-auto">
+        <!-- Tarjeta de Asignación -->
+        <div class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-brand-gold"></div>
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-brand-gold text-lg">pin_drop</span>
+                Tu Asignación
+            </h2>
+            
+            <div id="asignacionInfo" class="space-y-4">
+                <div class="text-center py-8 text-slate-400">
+                    <span class="material-symbols-outlined animate-spin text-3xl mb-2">refresh</span>
+                    <p class="text-sm">Buscando asignación...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botón Rápido Reporte -->
+        <button onclick="openModal()" class="w-full bg-red-500 active:bg-red-600 text-white p-6 rounded-3xl shadow-lg shadow-red-500/20 flex flex-col items-center justify-center gap-3 transition-colors border border-red-400 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gradient-to-t from-red-600/50 to-transparent"></div>
+            <span class="material-symbols-outlined text-5xl relative z-10">campaign</span>
+            <div class="relative z-10 text-center">
+                <h3 class="font-black text-xl tracking-tight">Reportar Alerta / Reclamación</h3>
+                <p class="text-red-100 text-sm mt-1">Radicar una anomalía oficial (Cód. Electoral)</p>
+            </div>
+        </button>
+    </main>
+
+    <!-- Modal Reporte con Causales -->
+    <div id="alertaModal" class="fixed inset-0 bg-brand-navy/60 backdrop-blur-sm z-50 hidden flex flex-col justify-end opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-t-[32px] w-full h-[95vh] flex flex-col translate-y-full transition-transform duration-300 shadow-2xl" id="modalContent">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 rounded-t-[32px] shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-red-500">warning</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-brand-navy leading-tight">Nueva Reclamación</h3>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Base Legal: Art 122 / 192</p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:bg-slate-200 p-2 rounded-xl transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto flex-1 pb-24">
+                <form id="alertaForm" class="space-y-6">
+                    
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Seleccione la Causal / Anomalía</label>
+                        <div class="relative">
+                            <select id="causalSelect" required onchange="actualizarInstruccion()" class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-4 pr-10 text-brand-navy font-semibold focus:bg-white focus:border-red-400 focus:ring-4 focus:ring-red-100 outline-none transition-all appearance-none text-sm cursor-pointer">
+                                <option value="">-- Seleccione un problema --</option>
+                                <optgroup label="A. Reclamaciones en Mesa (Art. 122)">
+                                    <option value="Exceso de sufragantes">1. Exceso de sufragantes (Urna > E-11)</option>
+                                    <option value="Error aritmético en E-14">2. Error aritmético en el E-14</option>
+                                    <option value="Falta de firmas en E-14">3. Falta de firmas (Menos de 3 jurados)</option>
+                                    <option value="Error en nombres de candidatos">4. Error en nombres/apellidos de candidatos</option>
+                                </optgroup>
+                                <optgroup label="B. Reclamaciones para Comisión (Art. 192)">
+                                    <option value="Pérdida o destrucción de material">5. Pérdida o destrucción de material / votos</option>
+                                    <option value="Entrega extemporánea de pliegos">6. Entrega extemporánea de pliegos</option>
+                                    <option value="Mesa en lugar no autorizado">7. Mesa en lugar no autorizado</option>
+                                </optgroup>
+                                <optgroup label="C. Delitos / Generales">
+                                    <option value="Suplantación de votantes">8. Suplantación de votantes / Fraude</option>
+                                    <option value="Compra de votos / Coacción">9. Compra de votos o Coacción</option>
+                                    <option value="Publicidad política indebida">10. Publicidad política indebida (A < 100m)</option>
+                                    <option value="Obstrucción labor del testigo">11. Obstrucción a labor del testigo</option>
+                                </optgroup>
+                            </select>
+                            <span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">expand_more</span>
+                        </div>
+                    </div>
+
+                    <!-- Instrucción Dinámica -->
+                    <div id="instruccionCard" class="hidden bg-blue-50 border border-blue-100 rounded-2xl p-5 relative overflow-hidden">
+                        <div class="absolute right-0 top-0 w-16 h-16 bg-blue-100 rounded-bl-full flex items-start justify-end p-2 opacity-50">
+                            <span class="material-symbols-outlined text-blue-500">info</span>
+                        </div>
+                        <h4 class="text-xs font-black text-blue-600 uppercase tracking-widest mb-2">Instrucción Legal (Qué Hacer)</h4>
+                        <p id="instruccionTexto" class="text-sm font-medium text-brand-navy relative z-10"></p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">Detalles de la anomalía</label>
+                        <textarea id="descripcion" required rows="3" placeholder="Ej: Faltan 2 firmas en el E-14, el presidente de mesa se niega a firmar..." class="w-full bg-slate-50 border border-slate-200 rounded-2xl py-4 px-4 text-brand-navy focus:bg-white focus:border-red-400 focus:ring-4 focus:ring-red-100 outline-none transition-all resize-none text-sm"></textarea>
+                    </div>
+
+                    <input type="hidden" id="puesto_id">
+                    <input type="hidden" id="mesa">
+
+                    <div id="error-msg" class="hidden text-sm font-medium text-red-500 bg-red-50 p-3 rounded-xl border border-red-100"></div>
+                </form>
+            </div>
+
+            <!-- Sticky Footer Button -->
+            <div class="absolute bottom-0 left-0 w-full p-6 bg-white border-t border-slate-100">
+                <button type="submit" form="alertaForm" id="btnGuardar" class="w-full bg-brand-navy active:bg-slate-800 text-white font-bold py-4 rounded-2xl transition-colors shadow-lg flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">send</span>
+                    <span>Enviar Alerta a Abogados</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script>
+        if (!api.auth.isAuthenticated()) window.location.href = '/';
+        const user = api.auth.getUser();
+        
+        if (user.rol !== 'Testigo_Electoral' && user.rol !== 'SuperAdmin') {
+            window.location.href = '/dashboard.html';
+        }
+
+        document.getElementById('userName').textContent = user.nombre;
+
+        let testigoInfo = null;
+
+        const instrucciones = {
+            "Exceso de sufragantes": "Verifique si los votos en la urna superan los votantes marcados en el formulario E-11. Solicite el recuento. Presente reclamación escrita a los jurados (Formato E-122).",
+            "Error aritmético en E-14": "Solicite al jurado revisar la suma de los votos en el formulario E-14. Si se niegan, presente reclamación escrita (Formato E-122) para que se anexe a los documentos.",
+            "Falta de firmas en E-14": "Verifique que el acta E-14 esté firmada por al menos TRES (3) jurados. Si no lo está, deje constancia mediante reclamación escrita (Formato E-122).",
+            "Error en nombres de candidatos": "Si el nombre/apellido en el E-14 no coincide con la papeleta, presente el Formato E-122 solicitando corrección inmediata en la mesa.",
+            "Pérdida o destrucción de material": "Tome fotos/videos si es seguro. Reporte inmediatamente al Delegado de la Registraduría o Fuerza Pública. Esta alerta va directo a nuestros abogados para el escrutinio (E-123).",
+            "Entrega extemporánea de pliegos": "Deje constancia si los sobres se entregan fuera de los tiempos legales por parte de los jurados. Alerte a nuestros abogados (Comisión).",
+            "Mesa en lugar no autorizado": "Reporte si el E-14 se está llenando/firmando fuera del salón correspondiente o si la mesa fue movida. Esta causal anula la mesa.",
+            "Suplantación de votantes": "Acuda a la Mesa de Justicia en el puesto de votación para interponer la denuncia por fraude. Notifique al delegado de la Registraduría.",
+            "Compra de votos / Coacción": "Evite confrontaciones. Documente discretamente y acuda a la Fuerza Pública o Mesa de Justicia (Fiscalía/Procuraduría) en el puesto.",
+            "Publicidad política indebida": "Solicite a la Fuerza Pública el retiro del material (prohibido a menos de 100 metros del puesto en día de elecciones).",
+            "Obstrucción labor del testigo": "Acuda inmediatamente al Delegado de la Registraduría del puesto para que garantice sus derechos o llame a la Policía."
+        };
+
+        function actualizarInstruccion() {
+            const select = document.getElementById('causalSelect');
+            const card = document.getElementById('instruccionCard');
+            const texto = document.getElementById('instruccionTexto');
+            
+            if (select.value && instrucciones[select.value]) {
+                texto.textContent = instrucciones[select.value];
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        }
+
+        async function cargarAsignacion() {
+            const container = document.getElementById('asignacionInfo');
+            const res = await api.testigos.list(user.email.split('@')[0]); 
+            
+            if (res.success && res.data.length > 0) {
+                testigoInfo = res.data[0];
+                document.getElementById('puesto_id').value = testigoInfo.puesto_id || '';
+                document.getElementById('mesa').value = testigoInfo.mesa || '';
+
+                if (testigoInfo.puesto) {
+                    container.innerHTML = `
+                        <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Puesto de Votación</p>
+                            <p class="font-bold text-brand-navy text-lg leading-tight">${testigoInfo.puesto.nombre}</p>
+                            <p class="text-sm text-slate-500 mt-1">${testigoInfo.municipio.nombre}</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-blue-50 rounded-2xl p-4 border border-blue-100">
+                                <p class="text-[10px] font-bold text-blue-500 uppercase tracking-widest mb-1">Mesa</p>
+                                <p class="font-black text-blue-700 text-2xl">${testigoInfo.mesa || '--'}</p>
+                            </div>
+                            <div class="bg-green-50 rounded-2xl p-4 border border-green-100">
+                                <p class="text-[10px] font-bold text-green-600 uppercase tracking-widest mb-1">Tipo</p>
+                                <p class="font-bold text-green-700 text-sm mt-1">${testigoInfo.tipo}</p>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div class="bg-amber-50 rounded-2xl p-5 border border-amber-200 text-center">
+                            <span class="material-symbols-outlined text-amber-500 text-3xl mb-2">pending_actions</span>
+                            <p class="font-bold text-amber-700">Sin puesto asignado</p>
+                            <p class="text-xs text-amber-600 mt-1">Su coordinación le asignará un puesto pronto.</p>
+                        </div>
+                    `;
+                }
+            } else {
+                container.innerHTML = `<p class="text-center text-red-500 py-4">Error al cargar información</p>`;
+            }
+        }
+
+        const modal = document.getElementById('alertaModal');
+        const modalContent = document.getElementById('modalContent');
+
+        function openModal() {
+            if(!testigoInfo || !testigoInfo.puesto_id) {
+                alert('No puede reportar alertas sin un puesto asignado.');
+                return;
+            }
+            document.getElementById('alertaForm').reset();
+            actualizarInstruccion();
+            document.getElementById('error-msg').classList.add('hidden');
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('translate-y-full');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalContent.classList.add('translate-y-full');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.getElementById('alertaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnGuardar');
+            const errorMsg = document.getElementById('error-msg');
+            const causalSelect = document.getElementById('causalSelect');
+            
+            if(!causalSelect.value) {
+                errorMsg.textContent = 'Seleccione una causal';
+                errorMsg.classList.remove('hidden');
+                return;
+            }
+
+            const data = {
+                puesto_id: document.getElementById('puesto_id').value,
+                mesa: document.getElementById('mesa').value || '1',
+                descripcion: document.getElementById('descripcion').value,
+                tipo_alerta: causalSelect.value
+            };
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Enviando...';
+                
+                const res = await api.alertas.create(data);
+                if (res.success) {
+                    alert('Alerta/Reclamación enviada correctamente. El equipo jurídico ha sido notificado y preparará el E-123 si aplica.');
+                    closeModal();
+                } else {
+                    errorMsg.textContent = res.message || 'Error al enviar';
+                    errorMsg.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorMsg.textContent = 'Error de conexión';
+                errorMsg.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined">send</span><span>Enviar Alerta a Abogados</span>';
+            }
+        });
+
+        function logout() {
+            api.auth.logout();
+            window.location.href = '/';
+        }
+
+        cargarAsignacion();
+    </script>
+</body>
+</html>

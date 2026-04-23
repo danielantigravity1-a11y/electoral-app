@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Usuario {
+  id            String         @id @default(uuid())
+  nombre        String
+  email         String         @unique
+  password_hash String
+  rol           RolUsuario
+  municipio_id  String?
+  municipio     Municipio?     @relation(fields: [municipio_id], references: [id])
+  testigo_id    String?        @unique  // Vinculación con testigo (si rol = Testigo_Electoral)
+  testigo       Testigo?       @relation(fields: [testigo_id], references: [id])
+  alertas       AlertasMesa[]
+  created_at    DateTime       @default(now())
+}
+
+enum RolUsuario {
+  SuperAdmin
+  Coordinador_Municipio
+  Digitador
+  Abogado_Juridico
+  Testigo_Electoral
+}
+
+model Municipio {
+  id               String              @id @default(uuid())
+  codigo_municipio String              @unique
+  nombre           String
+  puestos          Divipole[]
+  alertas          AlertasMesa[]
+  usuarios         Usuario[]
+  comisiones       ComisionEscrutadora[]
+}
+
+model Divipole {
+  id             String         @id @default(uuid())
+  municipio_id   String
+  municipio      Municipio      @relation(fields: [municipio_id], references: [id])
+  zona           String
+  codigo_puesto  String
+  nombre_puesto  String
+  mesas          Int?
+  testigos_asignados Testigo[]  @relation("PuestoAsignado")
+  testigos_votantes  Testigo[]  @relation("PuestoVotacion")
+  alertas        AlertasMesa[]
+
+  @@unique([municipio_id, zona, codigo_puesto])
+}
+
+model Testigo {
+  id                 String        @id @default(uuid())
+  cedula             String        @unique
+  nombre             String
+  telefono           String
+  email              String?
+
+  puesto_votacion_id String?
+  puesto_votacion    Divipole?     @relation("PuestoVotacion", fields: [puesto_votacion_id], references: [id])
+  mesa_votacion      Int?
+
+  puesto_id          String
+  puesto             Divipole      @relation("PuestoAsignado", fields: [puesto_id], references: [id])
+
+  mesa               Int?
+  tipo               TipoTestigo   @default(MESA)
+  estado             EstadoTestigo @default(Disponible)
+  usuario            Usuario?
+  comision_titular   ComisionEscrutadora? @relation("ComisionTitular")
+  comision_suplente  ComisionEscrutadora? @relation("ComisionSuplente")
+  created_at         DateTime      @default(now())
+}
+
+enum TipoTestigo {
+  MESA
+  COMISION_TITULAR
+  COMISION_SUPLENTE
+}
+
+enum EstadoTestigo {
+  Disponible
+  Asignado
+}
+
+model ComisionEscrutadora {
+  id            String    @id @default(uuid())
+  municipio_id  String
+  municipio     Municipio @relation(fields: [municipio_id], references: [id])
+  nombre        String
+  titular_id    String?   @unique
+  titular       Testigo?  @relation("ComisionTitular", fields: [titular_id], references: [id])
+  suplente_id   String?   @unique
+  suplente      Testigo?  @relation("ComisionSuplente", fields: [suplente_id], references: [id])
+  created_at    DateTime  @default(now())
+}
+
+model AlertasMesa {
+  id            String       @id @default(uuid())
+  tipo_alerta   String
+  descripcion   String
+  municipio_id  String
+  municipio     Municipio    @relation(fields: [municipio_id], references: [id])
+  puesto_id     String
+  puesto        Divipole     @relation(fields: [puesto_id], references: [id])
+  mesa          Int
+  reportado_por String
+  usuario       Usuario      @relation(fields: [reportado_por], references: [id])
+  estado        EstadoAlerta @default(Pendiente)
+  created_at    DateTime     @default(now())
+}
+
+enum EstadoAlerta {
+  Pendiente
+  En_Revision
+  Resuelta
+}

@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignación - Control Electoral Sucre</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { navy: '#0A192F', gold: '#D4AF37', light: '#F8FAFC' } },
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    boxShadow: { 'float': '0 20px 40px -15px rgba(0,0,0,0.05)', 'card': '0 4px 6px -1px rgba(0,0,0,0.05)' }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+</head>
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+
+<!-- Sidebar -->
+<aside class="w-72 bg-white border-r border-slate-100 flex flex-col hidden md:flex sticky top-0 h-screen z-20">
+    <div class="p-8 flex items-center gap-4 border-b border-slate-50">
+        <div class="w-12 h-12 bg-brand-navy rounded-2xl flex items-center justify-center shadow-lg shadow-brand-navy/20">
+            <span class="material-symbols-outlined text-brand-gold">shield</span>
+        </div>
+        <div><h2 class="font-bold text-brand-navy">Defensores</h2><p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Plataforma</p></div>
+    </div>
+    <nav class="flex-1 py-6 px-4 space-y-2">
+        <p class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-2">Menú</p>
+        <a href="/dashboard.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+        <a href="/asignacion.html" class="flex items-center gap-4 px-4 py-3.5 bg-brand-light text-brand-navy rounded-2xl font-semibold border border-slate-200 shadow-sm"><span class="material-symbols-outlined text-brand-gold">how_to_reg</span>Asignación</a>
+        <a href="/comision.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 rounded-2xl hover:bg-slate-50 hover:text-brand-navy transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">gavel</span>
+            <span class="font-semibold text-sm">Comisión Escrutadora</span>
+        </a>
+        <a href="/alertas.html" class="flex items-center gap-3 px-4 py-3.5 text-slate-500 rounded-2xl hover:bg-slate-50 hover:text-brand-navy transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">campaign</span>
+            <span class="font-semibold text-sm">Alertas y Denuncias</span>
+        </a>
+        <a href="/usuarios.html" id="menu-usuarios" class="hidden flex-items-center gap-3 px-4 py-3.5 text-slate-500 rounded-2xl hover:bg-slate-50 hover:text-brand-navy transition-all group">
+            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">group</span>
+            <span class="font-semibold text-sm">Gestión de Usuarios</span>
+        </a>
+    </nav>
+    <div class="p-6 border-t border-slate-50">
+        <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-navy/10 text-brand-navy flex items-center justify-center font-bold text-sm" id="user-initial">A</div>
+            <div class="flex-1 overflow-hidden">
+                <p class="text-sm font-bold text-brand-navy truncate" id="user-name">Admin</p>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold" id="user-role">...</p>
+            </div>
+        </div>
+        <button onclick="api.auth.logout();window.location.href='/'" class="w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+            <span class="material-symbols-outlined text-xl">logout</span>Cerrar Sesión
+        </button>
+    </div>
+</aside>
+
+<!-- Main -->
+<main class="flex-1 overflow-y-auto">
+<div class="p-6 md:p-10 max-w-[1600px] mx-auto space-y-8">
+    <header>
+        <div class="flex items-center gap-2 text-sm font-medium text-slate-500 mb-2">
+            <span class="material-symbols-outlined text-lg">home</span>
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+            <span class="text-brand-navy">Asignación</span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-brand-navy tracking-tight">Gestión de Testigos</h1>
+        <p class="text-slate-500 mt-2 text-lg">Registra y asigna testigos electorales de forma inteligente.</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+        <!-- LEFT: Form -->
+        <div class="lg:col-span-7">
+            <form id="form" class="bg-white rounded-[32px] p-8 shadow-card border border-slate-100 space-y-8">
+                <div id="statusMsg" class="hidden p-4 rounded-2xl text-sm font-medium border flex items-center gap-3"></div>
+
+                <!-- BLOQUE 1: Registro -->
+                <div>
+                    <h3 class="text-lg font-bold text-brand-navy flex items-center gap-2 mb-6 pb-4 border-b border-slate-100">
+                        <span class="material-symbols-outlined text-brand-gold">person_add</span>1. Datos del Testigo
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Cédula</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus-within:bg-white focus-within:border-brand-gold focus-within:ring-4 focus-within:ring-brand-gold/10 transition-all">
+                                <span class="material-symbols-outlined text-slate-400">badge</span>
+                                <input type="text" id="cedula" required placeholder="Ej. 110283944" class="w-full bg-transparent outline-none text-brand-navy font-medium placeholder-slate-400">
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus-within:bg-white focus-within:border-brand-gold focus-within:ring-4 focus-within:ring-brand-gold/10 transition-all">
+                                <span class="material-symbols-outlined text-slate-400">person</span>
+                                <input type="text" id="nombre" required placeholder="Nombres y Apellidos" class="w-full bg-transparent outline-none text-brand-navy font-medium placeholder-slate-400">
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Celular</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus-within:bg-white focus-within:border-brand-gold focus-within:ring-4 focus-within:ring-brand-gold/10 transition-all">
+                                <span class="material-symbols-outlined text-slate-400">phone_android</span>
+                                <input type="tel" id="telefono" required placeholder="300 123 4567" class="w-full bg-transparent outline-none text-brand-navy font-medium placeholder-slate-400">
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus-within:bg-white focus-within:border-brand-gold focus-within:ring-4 focus-within:ring-brand-gold/10 transition-all">
+                                <span class="material-symbols-outlined text-slate-400">mail</span>
+                                <input type="email" id="email" placeholder="correo@ejemplo.com" class="w-full bg-transparent outline-none text-brand-navy font-medium placeholder-slate-400">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 2: Dónde Vota -->
+                <div>
+                    <h3 class="text-lg font-bold text-brand-navy flex items-center gap-2 mb-6 pb-4 border-b border-slate-100">
+                        <span class="material-symbols-outlined text-brand-gold">how_to_vote</span>2. ¿Dónde Vota?
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Municipio</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl focus-within:bg-white focus-within:border-brand-gold transition-all">
+                                <span class="material-symbols-outlined text-slate-400">map</span>
+                                <select id="muniVota" required class="w-full bg-transparent outline-none text-brand-navy font-medium appearance-none cursor-pointer">
+                                    <option value="">Cargando...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Puesto de Votación</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl transition-all" id="cPuestoVota">
+                                <span class="material-symbols-outlined text-slate-400">location_on</span>
+                                <select id="puestoVota" required disabled class="w-full bg-transparent outline-none text-brand-navy font-medium appearance-none">
+                                    <option value="">Seleccione municipio</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mesa de Votación</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl transition-all" id="cMesaVota">
+                                <span class="material-symbols-outlined text-slate-400">table_restaurant</span>
+                                <select id="mesaVota" disabled class="w-full bg-transparent outline-none text-brand-navy font-medium appearance-none">
+                                    <option value="">Seleccione puesto</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE 3: Asignación -->
+                <div>
+                    <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100 flex-wrap gap-4">
+                        <h3 class="text-lg font-bold text-brand-navy flex items-center gap-2">
+                            <span class="material-symbols-outlined text-brand-gold">assignment_ind</span>3. Asignación (Misión)
+                        </h3>
+                        <label class="flex items-center gap-3 cursor-pointer select-none">
+                            <span class="text-xs font-bold text-brand-navy uppercase tracking-wider">Auto-Asignar</span>
+                            <div class="relative w-12 h-6">
+                                <input type="checkbox" id="autoToggle" checked class="peer sr-only">
+                                <div class="w-12 h-6 bg-slate-300 peer-checked:bg-brand-navy rounded-full transition-colors"></div>
+                                <div class="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow peer-checked:translate-x-6 transition-transform"></div>
+                            </div>
+                        </label>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Municipio Destino</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl opacity-60" id="cMuniDest">
+                                <span class="material-symbols-outlined text-slate-400">map</span>
+                                <select id="muniDest" disabled class="w-full bg-transparent outline-none text-brand-navy font-medium appearance-none">
+                                    <option value="">Autocompletado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Puesto Asignado</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl opacity-60" id="cPuestoDest">
+                                <span class="material-symbols-outlined text-slate-400">account_balance</span>
+                                <select id="puestoDest" disabled class="w-full bg-transparent outline-none text-brand-navy font-medium appearance-none">
+                                    <option value="">Autocompletado</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mesa a Vigilar</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl opacity-60" id="cMesaDest">
+                                <span class="material-symbols-outlined text-slate-400">table_restaurant</span>
+                                <select id="mesaDest" disabled class="w-full bg-transparent outline-none text-brand-navy font-medium appearance-none">
+                                    <option value="">Autocompletado</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full bg-brand-navy hover:bg-slate-800 text-white font-semibold py-4 rounded-2xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                    <span class="material-symbols-outlined">save</span><span>Registrar Testigo y Asignar</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- RIGHT: Search + List -->
+        <div class="lg:col-span-5">
+            <div class="bg-white rounded-[32px] p-8 shadow-card border border-slate-100 sticky top-8">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-lg font-bold text-brand-navy">Testigos Registrados</h3>
+                    <span class="px-3 py-1 bg-green-50 text-green-600 rounded-full text-[10px] font-bold tracking-widest uppercase" id="countBadge">0</span>
+                </div>
+                <!-- Search Bar -->
+                <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl mb-5 focus-within:bg-white focus-within:border-brand-gold focus-within:ring-4 focus-within:ring-brand-gold/10 transition-all">
+                    <span class="material-symbols-outlined text-slate-400">search</span>
+                    <input type="text" id="searchInput" placeholder="Buscar por cédula, nombre..." class="w-full bg-transparent outline-none text-brand-navy font-medium placeholder-slate-400 text-sm">
+                </div>
+                <div id="lista" class="space-y-2 max-h-[550px] overflow-y-auto pr-1">
+                    <p class="text-center py-8 text-slate-400 text-sm">Cargando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</main>
+
+<script src="/js/api.js"></script>
+<script>
+let puestosCache = {}; // municipioId -> [puestos]
+let autoMode = true;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    if (!api.auth.isAuthenticated()) { window.location.href = '/'; return; }
+    const user = api.auth.getUser();
+    document.getElementById('user-name').textContent = user.nombre;
+    document.getElementById('user-role').textContent = user.rol.replace('_', ' ');
+    document.getElementById('user-initial').textContent = user.nombre.charAt(0).toUpperCase();
+
+    if (user.rol === 'SuperAdmin') {
+        document.getElementById('menu-usuarios').classList.remove('hidden');
+        document.getElementById('menu-usuarios').classList.add('flex');
+    }
+    await loadMunicipios();
+    await loadTestigos();
+    setupEvents();
+});
+
+async function loadMunicipios() {
+    const res = await api.divipole.getMunicipios();
+    if (!res.success) return;
+    const opts = '<option value="">Seleccione municipio...</option>' + res.data.map(m => `<option value="${m.id}">${m.nombre}</option>`).join('');
+    document.getElementById('muniVota').innerHTML = opts;
+    document.getElementById('muniDest').innerHTML = opts;
+}
+
+async function loadPuestos(muniId) {
+    if (puestosCache[muniId]) return puestosCache[muniId];
+    const res = await api.divipole.getPuestos(muniId);
+    if (res.success) { puestosCache[muniId] = res.data; return res.data; }
+    return [];
+}
+
+function fillPuestoSelect(selectEl, puestos) {
+    selectEl.innerHTML = '<option value="">Seleccione puesto...</option>' + puestos.map(p => `<option value="${p.id}" data-mesas="${p.mesas || 0}">${p.nombre_puesto} (Zona ${p.zona})</option>`).join('');
+}
+
+function fillMesaSelect(selectEl, count) {
+    if (!count || count <= 0) {
+        selectEl.innerHTML = '<option value="">Sin datos de mesas</option>';
+        return;
+    }
+    let html = '<option value="">Seleccione mesa...</option>';
+    for (let i = 1; i <= count; i++) html += `<option value="${i}">Mesa ${i}</option>`;
+    selectEl.innerHTML = html;
+}
+
+function setupEvents() {
+    const muniVota = document.getElementById('muniVota');
+    const puestoVota = document.getElementById('puestoVota');
+    const mesaVota = document.getElementById('mesaVota');
+    const muniDest = document.getElementById('muniDest');
+    const puestoDest = document.getElementById('puestoDest');
+    const mesaDest = document.getElementById('mesaDest');
+    const toggle = document.getElementById('autoToggle');
+
+    // Municipio de votación cambia -> cargar puestos
+    muniVota.addEventListener('change', async (e) => {
+        const id = e.target.value;
+        puestoVota.disabled = !id;
+        mesaVota.disabled = true;
+        mesaVota.innerHTML = '<option value="">Seleccione puesto</option>';
+        if (id) {
+            const p = await loadPuestos(id);
+            fillPuestoSelect(puestoVota, p);
+            puestoVota.disabled = false;
+            if (autoMode) { muniDest.value = id; const p2 = await loadPuestos(id); fillPuestoSelect(puestoDest, p2); }
+        } else {
+            puestoVota.innerHTML = '<option value="">Seleccione municipio</option>';
+            if (autoMode) { muniDest.value = ''; puestoDest.innerHTML = '<option value="">Autocompletado</option>'; mesaDest.innerHTML = '<option value="">Autocompletado</option>'; }
+        }
+    });
+
+    // Puesto de votación cambia -> cargar mesas + auto-assign
+    puestoVota.addEventListener('change', (e) => {
+        const sel = e.target.selectedOptions[0];
+        const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
+        fillMesaSelect(mesaVota, mesas);
+        mesaVota.disabled = mesas <= 0;
+        if (autoMode) {
+            puestoDest.value = e.target.value;
+            fillMesaSelect(mesaDest, mesas);
+        }
+    });
+
+    // Mesa de votación cambia -> auto-assign
+    mesaVota.addEventListener('change', (e) => {
+        if (autoMode) mesaDest.value = e.target.value;
+    });
+
+    // Toggle auto/manual
+    toggle.addEventListener('change', (e) => {
+        autoMode = e.target.checked;
+        const destContainers = [document.getElementById('cMuniDest'), document.getElementById('cPuestoDest'), document.getElementById('cMesaDest')];
+        if (autoMode) {
+            muniDest.disabled = true; puestoDest.disabled = true; mesaDest.disabled = true;
+            destContainers.forEach(c => { c.classList.add('bg-slate-100', 'opacity-60'); c.classList.remove('bg-slate-50'); });
+            // Copy current values
+            muniDest.value = muniVota.value;
+            if (muniVota.value) {
+                loadPuestos(muniVota.value).then(p => {
+                    fillPuestoSelect(puestoDest, p);
+                    puestoDest.value = puestoVota.value;
+                    const sel = puestoVota.selectedOptions[0];
+                    const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
+                    fillMesaSelect(mesaDest, mesas);
+                    mesaDest.value = mesaVota.value;
+                });
+            }
+        } else {
+            muniDest.disabled = false; puestoDest.disabled = false; mesaDest.disabled = false;
+            destContainers.forEach(c => { c.classList.remove('bg-slate-100', 'opacity-60'); c.classList.add('bg-slate-50'); });
+        }
+    });
+
+    // Manual: municipio destino cambia
+    muniDest.addEventListener('change', async (e) => {
+        if (autoMode) return;
+        const id = e.target.value;
+        if (id) { const p = await loadPuestos(id); fillPuestoSelect(puestoDest, p); puestoDest.disabled = false; }
+    });
+    puestoDest.addEventListener('change', (e) => {
+        if (autoMode) return;
+        const sel = e.target.selectedOptions[0];
+        const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
+        fillMesaSelect(mesaDest, mesas);
+        mesaDest.disabled = mesas <= 0;
+    });
+
+    // Search
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => loadTestigos(e.target.value), 300);
+    });
+
+    // Form submit
+    document.getElementById('form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const puestoAsignado = document.getElementById('puestoDest').value || document.getElementById('puestoVota').value;
+        if (!puestoAsignado) { showStatus('error', 'Seleccione al menos un puesto de votación.'); return; }
+        const data = {
+            cedula: document.getElementById('cedula').value,
+            nombre: document.getElementById('nombre').value,
+            telefono: document.getElementById('telefono').value,
+            email: document.getElementById('email').value || null,
+            puesto_votacion_id: document.getElementById('puestoVota').value || null,
+            mesa_votacion: document.getElementById('mesaVota').value ? parseInt(document.getElementById('mesaVota').value) : null,
+            puesto_id: puestoAsignado,
+            mesa: document.getElementById('mesaDest').value ? parseInt(document.getElementById('mesaDest').value) : null
+        };
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true; btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span><span>Guardando...</span>';
+        try {
+            const res = await api.testigos.create(data);
+            if (res.success) {
+                showStatus('success', '¡Testigo registrado y asignado correctamente!');
+                document.getElementById('form').reset();
+                puestoVota.disabled = true; mesaVota.disabled = true;
+                puestoVota.innerHTML = '<option value="">Seleccione municipio</option>';
+                mesaVota.innerHTML = '<option value="">Seleccione puesto</option>';
+                puestoDest.innerHTML = '<option value="">Autocompletado</option>';
+                mesaDest.innerHTML = '<option value="">Autocompletado</option>';
+                await loadTestigos();
+            } else { showStatus('error', res.message || 'Error al registrar'); }
+        } catch (err) { showStatus('error', 'Error de conexión'); }
+        btn.disabled = false; btn.innerHTML = '<span class="material-symbols-outlined">save</span><span>Registrar Testigo y Asignar</span>';
+    });
+}
+
+async function loadTestigos(search) {
+    const res = await api.testigos.list(search);
+    const c = document.getElementById('lista');
+    const badge = document.getElementById('countBadge');
+    if (res.success && res.data.length > 0) {
+        badge.textContent = res.data.length;
+        c.innerHTML = res.data.map(t => `
+            <div class="flex items-start gap-3 p-3 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all">
+                <div class="w-9 h-9 bg-brand-navy/5 text-brand-navy rounded-xl flex items-center justify-center shrink-0 mt-0.5">
+                    <span class="material-symbols-outlined text-lg">person</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h4 class="font-bold text-brand-navy text-sm truncate">${t.nombre}</h4>
+                    <p class="text-[11px] text-slate-500 truncate">CC: ${t.cedula} ${t.telefono ? '· ' + t.telefono : ''}</p>
+                    <p class="text-[11px] text-slate-400 truncate mt-0.5">${t.puesto?.nombre_puesto || 'Sin puesto'} ${t.mesa ? '· Mesa ' + t.mesa : ''}</p>
+                </div>
+                <span class="px-2 py-0.5 bg-green-50 text-green-600 rounded-lg text-[10px] font-bold shrink-0 mt-1">${t.estado}</span>
+            </div>
+        `).join('');
+    } else {
+        badge.textContent = '0';
+        c.innerHTML = '<p class="text-center py-8 text-slate-400 text-sm">No se encontraron testigos.</p>';
+    }
+}
+
+function showStatus(type, msg) {
+    const d = document.getElementById('statusMsg');
+    d.className = `p-4 rounded-2xl text-sm font-medium border flex items-center gap-3 mb-4 ${type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`;
+    d.innerHTML = `<span class="material-symbols-outlined">${type === 'success' ? 'check_circle' : 'error'}</span><span>${msg}</span>`;
+    d.classList.remove('hidden');
+    setTimeout(() => d.classList.add('hidden'), 5000);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Alertas y Reclamaciones - Defensores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { navy: '#0A192F', gold: '#D4AF37', light: '#F8FAFC', white: '#FFFFFF' }
+                    },
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    boxShadow: { 'card': '0 10px 30px -10px rgba(0,0,0,0.05)', 'float': '0 20px 40px -15px rgba(0,0,0,0.05)' }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+</head>
+<body class="bg-brand-light font-sans text-brand-navy min-h-screen flex overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-72 bg-white border-r border-slate-100 flex flex-col h-screen hidden md:flex shrink-0 relative z-20">
+        <div class="p-8">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-brand-navy rounded-[16px] flex items-center justify-center shadow-lg shadow-brand-navy/20">
+                    <span class="material-symbols-outlined text-brand-gold">shield</span>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight text-brand-navy leading-tight">Defensores</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plataforma</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-2">Menú</p>
+            <a href="/dashboard.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+            <a href="/asignacion.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">how_to_reg</span>Asignación</a>
+            <a href="/comision.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">gavel</span>Comisión Escrutadora</a>
+            <a href="/alertas.html" class="flex items-center gap-4 px-4 py-3.5 bg-slate-50 text-brand-navy rounded-2xl transition-all group border border-slate-100 shadow-sm relative overflow-hidden">
+                <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-gold rounded-r"></div>
+                <span class="material-symbols-outlined group-hover:scale-110 transition-transform text-brand-gold">campaign</span>
+                <span class="font-semibold text-sm">Alertas y Reclamaciones</span>
+            </a>
+            <a href="/usuarios.html" id="menu-usuarios" class="hidden flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">group</span>Usuarios</a>
+        </nav>
+
+        <div class="p-6 border-t border-slate-100">
+            <div class="bg-slate-50 rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
+                <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center font-bold text-brand-navy" id="userAvatar">A</div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold text-brand-navy truncate" id="userName">Admin</p>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate" id="userRole">Rol</p>
+                </div>
+            </div>
+            <button onclick="api.auth.logout(); window.location.href='/'" class="w-full mt-4 flex items-center gap-3 px-4 py-3 text-slate-500 rounded-2xl hover:bg-red-50 hover:text-red-600 transition-all group">
+                <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">logout</span>
+                <span class="font-semibold text-sm">Cerrar Sesión</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
+        <header class="bg-white/80 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-10 px-8 py-6 flex justify-between items-center">
+            <div>
+                <div class="flex items-center gap-2 text-sm font-semibold text-slate-400 mb-1">
+                    <span class="material-symbols-outlined text-lg">home</span>
+                    <span class="material-symbols-outlined text-lg">chevron_right</span>
+                    <span>Legal</span>
+                </div>
+                <h2 class="text-3xl font-black text-brand-navy tracking-tight">Reclamaciones y Alertas</h2>
+                <p class="text-slate-500 text-sm mt-1">Panel para Abogados: Reclamaciones en Escrutinio por Puesto y Mesa</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <select id="filtroMunicipio" onchange="loadAlertas()" class="bg-slate-50 border border-slate-200 rounded-xl py-2 px-4 text-sm font-semibold text-brand-navy outline-none focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/10 transition-all">
+                    <option value="">Todos los Municipios</option>
+                </select>
+                <button onclick="loadAlertas()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 p-2 rounded-xl transition-colors shadow-sm">
+                    <span class="material-symbols-outlined">refresh</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-8 relative">
+            <div id="alertasList" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Data is loaded here -->
+                <div class="col-span-full py-20 text-center text-slate-400">
+                    <span class="material-symbols-outlined animate-spin text-4xl mb-4">refresh</span>
+                    <p class="font-semibold">Cargando reclamaciones...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!api.auth.isAuthenticated()) { window.location.href = '/'; return; }
+            const user = api.auth.getUser();
+            document.getElementById('userName').textContent = user.nombre;
+            document.getElementById('userRole').textContent = user.rol.replace('_', ' ');
+            document.getElementById('userAvatar').textContent = user.nombre.charAt(0).toUpperCase();
+            
+            if (user.rol === 'SuperAdmin') {
+                document.getElementById('menu-usuarios').classList.remove('hidden');
+                document.getElementById('menu-usuarios').classList.add('flex');
+            }
+            await loadMunicipios();
+            await loadAlertas();
+        });
+
+        async function loadMunicipios() {
+            const res = await api.divipole.getMunicipios();
+            if (res.success) {
+                const select = document.getElementById('filtroMunicipio');
+                res.data.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m.id; opt.textContent = m.nombre;
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        function isCausalArt192(causal) {
+            const art192 = [
+                "Pérdida o destrucción de material",
+                "Entrega extemporánea de pliegos",
+                "Mesa en lugar no autorizado"
+            ];
+            return art192.includes(causal);
+        }
+
+        async function updateEstado(id, nuevoEstado) {
+            const btnHtml = document.getElementById(`btn-${id}`).innerHTML;
+            document.getElementById(`btn-${id}`).innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">refresh</span>';
+            try {
+                const res = await fetchAPI(`/alertas/${id}/estado`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ estado: nuevoEstado })
+                });
+                if (res.success) {
+                    loadAlertas();
+                } else {
+                    alert(res.message);
+                    document.getElementById(`btn-${id}`).innerHTML = btnHtml;
+                }
+            } catch (e) {
+                alert('Error al actualizar');
+                document.getElementById(`btn-${id}`).innerHTML = btnHtml;
+            }
+        }
+
+        async function loadAlertas() {
+            const municipioId = document.getElementById('filtroMunicipio').value;
+            const container = document.getElementById('alertasList');
+            container.innerHTML = '<div class="col-span-full py-10 text-center text-slate-400"><span class="material-symbols-outlined animate-spin text-4xl mb-4">refresh</span><p>Cargando...</p></div>';
+            
+            const res = await fetchAPI(`/alertas${municipioId ? '?municipio_id='+municipioId : ''}`);
+            if (res.success) {
+                if (res.data.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-full py-20 text-center text-slate-400 bg-white rounded-3xl border border-slate-100 shadow-sm">
+                            <span class="material-symbols-outlined text-6xl mb-4 text-slate-300">verified</span>
+                            <p class="text-xl font-bold text-brand-navy">No hay reclamaciones reportadas</p>
+                            <p class="mt-2 text-sm">Todas las mesas operan con normalidad en este momento.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = res.data.map(a => {
+                    const isArt192 = isCausalArt192(a.tipo_alerta);
+                    let headerColor = "bg-red-50";
+                    let textColor = "text-red-700";
+                    let borderColor = "border-red-200";
+                    let icon = "warning";
+                    
+                    if (a.estado === 'Resuelta') {
+                        headerColor = "bg-green-50";
+                        textColor = "text-green-700";
+                        borderColor = "border-green-200";
+                        icon = "check_circle";
+                    } else if (a.estado === 'En_Revision') {
+                        headerColor = "bg-blue-50";
+                        textColor = "text-blue-700";
+                        borderColor = "border-blue-200";
+                        icon = "gavel";
+                    }
+
+                    return `
+                    <div class="bg-white rounded-3xl overflow-hidden shadow-card border border-slate-100 flex flex-col hover:shadow-float transition-shadow">
+                        <!-- Card Header -->
+                        <div class="${headerColor} px-6 py-4 border-b ${borderColor} flex justify-between items-start">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined ${textColor}">${icon}</span>
+                                <div>
+                                    <p class="text-[10px] font-bold uppercase tracking-widest ${textColor} opacity-80">
+                                        ${isArt192 ? 'Causal Comisión (Art 192)' : 'Causal de Mesa (Art 122)'}
+                                    </p>
+                                    <h3 class="font-bold text-lg leading-tight ${textColor}">${a.tipo_alerta}</h3>
+                                </div>
+                            </div>
+                            <span class="px-3 py-1 bg-white/60 rounded-full text-xs font-bold ${textColor} border ${borderColor}">
+                                ${a.estado.replace('_', ' ')}
+                            </span>
+                        </div>
+                        
+                        <!-- Card Body -->
+                        <div class="p-6 flex-1 flex flex-col">
+                            <div class="grid grid-cols-2 gap-4 mb-4">
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Puesto</p>
+                                    <p class="font-bold text-brand-navy text-sm truncate">${a.puesto ? a.puesto.nombre_puesto : 'Desconocido'}</p>
+                                </div>
+                                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Mesa</p>
+                                    <p class="font-black text-brand-navy text-xl">${a.mesa}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-6 flex-1">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Detalles del Testigo</p>
+                                <p class="text-sm text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100 italic">"${a.descripcion}"</p>
+                            </div>
+                            
+                            <div class="flex justify-between items-center text-xs text-slate-400 mb-6 border-t border-slate-50 pt-4">
+                                <span>Reportó: <strong>${a.usuario ? a.usuario.nombre : 'Testigo'}</strong></span>
+                                <span>${new Date(a.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                            </div>
+
+                            <!-- Actions for Lawyers -->
+                            <div class="grid grid-cols-2 gap-3 mt-auto">
+                                ${a.estado === 'Pendiente' ? `
+                                    <button id="btn-${a.id}" onclick="updateEstado('${a.id}', 'En_Revision')" class="col-span-2 py-3 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl transition-colors border border-blue-200 flex justify-center items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">gavel</span> Preparar Reclamación
+                                    </button>
+                                ` : ''}
+                                
+                                ${a.estado === 'En_Revision' ? `
+                                    <button id="btn-${a.id}" onclick="updateEstado('${a.id}', 'Resuelta')" class="col-span-2 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-colors shadow-lg shadow-green-500/20 flex justify-center items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">check_circle</span> Marcar E-122/E-123 Presentado
+                                    </button>
+                                ` : ''}
+
+                                ${a.estado === 'Resuelta' ? `
+                                    <div class="col-span-2 py-3 bg-slate-50 text-slate-400 font-bold rounded-xl border border-slate-100 flex justify-center items-center gap-2">
+                                        <span class="material-symbols-outlined text-sm">verified</span> Reclamación Radicada
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+            } else {
+                container.innerHTML = '<div class="col-span-full text-center text-red-500">Error al cargar reclamaciones</div>';
+            }
+        }
+    </script>
+</body>
+</html>

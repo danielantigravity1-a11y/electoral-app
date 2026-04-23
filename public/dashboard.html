@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Control Electoral Sucre</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { brand: { navy: '#0A192F', gold: '#D4AF37', light: '#F8FAFC' } },
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    boxShadow: { 'float': '0 20px 40px -15px rgba(0,0,0,0.05)', 'card': '0 4px 6px -1px rgba(0,0,0,0.05)' }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+</head>
+<body class="bg-brand-light font-sans text-slate-800 min-h-screen flex">
+<!-- Sidebar -->
+<aside class="w-72 bg-white border-r border-slate-100 flex flex-col hidden md:flex sticky top-0 h-screen z-20">
+    <div class="p-8 flex items-center gap-4 border-b border-slate-50">
+        <div class="w-12 h-12 bg-brand-navy rounded-2xl flex items-center justify-center shadow-lg shadow-brand-navy/20">
+            <span class="material-symbols-outlined text-brand-gold">shield</span>
+        </div>
+        <div><h2 class="font-bold text-brand-navy">Defensores</h2><p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest">Plataforma</p></div>
+    </div>
+    <nav class="flex-1 py-6 px-4 space-y-2">
+        <p class="px-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-2">Menú</p>
+        <a href="/dashboard.html" class="flex items-center gap-4 px-4 py-3.5 bg-brand-light text-brand-navy rounded-2xl font-semibold border border-slate-200 shadow-sm"><span class="material-symbols-outlined text-brand-gold">grid_view</span>Dashboard</a>
+        <a href="/asignacion.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">how_to_reg</span>Asignación</a>
+        <a href="/comision.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">gavel</span>Comisión Escrutadora</a>
+        <a href="/alertas.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">campaign</span>Alertas</a>
+        <a href="/usuarios.html" id="menu-usuarios" class="hidden flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">group</span>Usuarios</a>
+    </nav>
+    <div class="p-6 border-t border-slate-50">
+        <div class="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 mb-4">
+            <div class="w-10 h-10 rounded-xl bg-brand-navy/10 text-brand-navy flex items-center justify-center font-bold text-sm" id="userAvatar">A</div>
+            <div class="flex-1 overflow-hidden">
+                <p class="text-sm font-bold text-brand-navy truncate" id="userName">Admin</p>
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider" id="userRole">...</p>
+            </div>
+        </div>
+        <button onclick="api.auth.logout();window.location.href='/'" class="w-full flex items-center justify-center gap-2 py-3 text-sm font-semibold text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+            <span class="material-symbols-outlined text-xl">logout</span>Cerrar Sesión
+        </button>
+    </div>
+</aside>
+
+<!-- Main -->
+<main class="flex-1 overflow-y-auto">
+<div class="p-6 md:p-10 lg:p-12 max-w-7xl mx-auto space-y-10">
+    <header>
+        <div class="flex items-center gap-2 text-sm font-medium text-slate-500 mb-2">
+            <span class="material-symbols-outlined text-lg">home</span>
+            <span class="material-symbols-outlined text-sm">chevron_right</span>
+            <span class="text-brand-navy">Dashboard</span>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold text-brand-navy tracking-tight mt-2">Visión General</h1>
+        <p class="text-slate-500 mt-2 text-lg">Control en tiempo real del proceso electoral.</p>
+    </header>
+
+    <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-[32px] p-8 shadow-card border border-slate-100 relative overflow-hidden group hover:shadow-float hover:-translate-y-1 transition-all duration-300">
+            <div class="absolute -right-6 -top-6 w-32 h-32 bg-slate-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
+            <div class="relative z-10">
+                <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 mb-6 group-hover:bg-brand-navy group-hover:scale-110 transition-all duration-300">
+                    <span class="material-symbols-outlined text-brand-navy group-hover:text-white text-3xl transition-colors">how_to_reg</span>
+                </div>
+                <h3 class="text-5xl font-black text-brand-navy tracking-tighter" id="stat-testigos">0</h3>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Testigos Asignados</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-[32px] p-8 shadow-card border border-slate-100 relative overflow-hidden group hover:shadow-float hover:-translate-y-1 transition-all duration-300">
+            <div class="absolute -right-6 -top-6 w-32 h-32 bg-amber-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
+            <div class="relative z-10">
+                <div class="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 mb-6 group-hover:bg-brand-gold group-hover:scale-110 transition-all duration-300">
+                    <span class="material-symbols-outlined text-brand-gold group-hover:text-white text-3xl transition-colors">account_balance</span>
+                </div>
+                <h3 class="text-5xl font-black text-brand-navy tracking-tighter" id="stat-puestos">0</h3>
+                <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mt-2">Puestos Electorales</p>
+            </div>
+        </div>
+        <div class="bg-white rounded-[32px] p-8 shadow-card border border-red-50 relative overflow-hidden group hover:shadow-float hover:-translate-y-1 hover:border-red-100 transition-all duration-300">
+            <div class="absolute -right-6 -top-6 w-32 h-32 bg-red-50 rounded-full group-hover:scale-150 transition-transform duration-500 ease-out z-0"></div>
+            <div class="relative z-10">
+                <div class="w-14 h-14 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100 mb-6 group-hover:bg-red-500 group-hover:scale-110 transition-all duration-300">
+                    <span class="material-symbols-outlined text-red-500 group-hover:text-white text-3xl transition-colors">campaign</span>
+                </div>
+                <h3 class="text-5xl font-black text-red-600 tracking-tighter" id="stat-alertas">0</h3>
+                <p class="text-xs font-bold text-red-400 uppercase tracking-widest mt-2">Alertas Activas</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="text-lg font-bold text-brand-navy mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-slate-400">bolt</span>Accesos Directos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <a href="/asignacion.html" class="group flex items-center gap-6 p-6 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-float hover:border-brand-gold/30 transition-all">
+                <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:bg-brand-navy transition-colors">
+                    <span class="material-symbols-outlined text-slate-600 group-hover:text-white text-3xl transition-colors">person_add</span>
+                </div>
+                <div class="flex-1"><h4 class="font-bold text-brand-navy text-lg">Nueva Asignación</h4><p class="text-slate-500 text-sm mt-1">Registrar un testigo en una mesa</p></div>
+                <span class="material-symbols-outlined text-slate-300 group-hover:text-brand-gold group-hover:translate-x-1 transition-all">arrow_forward</span>
+            </a>
+            <a href="/alertas.html" class="group flex items-center gap-6 p-6 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-float hover:border-red-200 transition-all">
+                <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center border border-slate-100 group-hover:bg-red-50 transition-colors">
+                    <span class="material-symbols-outlined text-slate-600 group-hover:text-red-500 text-3xl transition-colors">notification_important</span>
+                </div>
+                <div class="flex-1"><h4 class="font-bold text-brand-navy text-lg">Registrar Anomalía</h4><p class="text-slate-500 text-sm mt-1">Crear un reporte urgente</p></div>
+                <span class="material-symbols-outlined text-slate-300 group-hover:text-red-500 group-hover:translate-x-1 transition-all">arrow_forward</span>
+            </a>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="text-lg font-bold text-brand-navy mb-6 flex items-center gap-2"><span class="material-symbols-outlined text-slate-400">download</span>Reportes y Exportaciones</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <button onclick="window.open(api.reportes.testigos('xlsx'), '_blank')" class="group flex items-center gap-6 p-6 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-float hover:border-green-200 transition-all text-left">
+                <div class="w-16 h-16 bg-green-50 rounded-2xl flex items-center justify-center border border-green-100 group-hover:bg-green-500 transition-colors">
+                    <span class="material-symbols-outlined text-green-600 group-hover:text-white text-3xl transition-colors">table</span>
+                </div>
+                <div class="flex-1"><h4 class="font-bold text-brand-navy text-lg">Exportar a Excel</h4><p class="text-slate-500 text-sm mt-1">Descargar matriz completa de testigos</p></div>
+                <span class="material-symbols-outlined text-slate-300 group-hover:text-green-500 group-hover:translate-x-1 transition-all">download</span>
+            </button>
+            <button onclick="window.open(api.reportes.testigos('pdf'), '_blank')" class="group flex items-center gap-6 p-6 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-float hover:border-red-200 transition-all text-left">
+                <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center border border-red-100 group-hover:bg-red-500 transition-colors">
+                    <span class="material-symbols-outlined text-red-600 group-hover:text-white text-3xl transition-colors">picture_as_pdf</span>
+                </div>
+                <div class="flex-1"><h4 class="font-bold text-brand-navy text-lg">Exportar a PDF</h4><p class="text-slate-500 text-sm mt-1">Descargar listado en formato imprimible</p></div>
+                <span class="material-symbols-outlined text-slate-300 group-hover:text-red-500 group-hover:translate-x-1 transition-all">download</span>
+            </button>
+        </div>
+    </section>
+</div>
+</main>
+
+<script src="/js/api.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+    if (!api.auth.isAuthenticated()) { window.location.href = '/'; return; }
+    const u = api.auth.getUser();
+    document.getElementById('userName').textContent = u.nombre;
+    document.getElementById('userRole').textContent = u.rol.replace('_', ' ');
+    document.getElementById('userAvatar').textContent = u.nombre.charAt(0).toUpperCase();
+    if (u.rol === 'SuperAdmin') {
+        document.getElementById('menu-usuarios').classList.remove('hidden');
+        document.getElementById('menu-usuarios').classList.add('flex');
+    }
+    try {
+        const [tRes, aRes, mRes] = await Promise.all([api.testigos.list(), api.alertas.list(), api.divipole.getMunicipios()]);
+        if (tRes.success) document.getElementById('stat-testigos').textContent = tRes.data.length;
+        if (aRes.success) document.getElementById('stat-alertas').textContent = aRes.data.filter(a => a.estado !== 'Resuelta').length;
+        // Count total puestos
+        if (mRes.success) {
+            let total = 0;
+            for (const m of mRes.data) { const p = await api.divipole.getPuestos(m.id); if (p.success) total += p.data.length; }
+            document.getElementById('stat-puestos').textContent = total;
+        }
+    } catch (e) { console.error(e); }
+});
+</script>
+</body>
+</html>
