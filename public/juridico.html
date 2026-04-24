@@ -116,13 +116,16 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Mesa</label>
-                                <input type="number" id="inputMesaComp" min="1" class="w-full bg-white border border-slate-200 rounded-xl py-3 px-3 text-sm font-semibold outline-none focus:border-brand-gold" required placeholder="Nro">
+                                <select id="selectMesaComp" class="w-full bg-white border border-slate-200 rounded-xl py-3 px-3 text-sm font-semibold outline-none focus:border-brand-gold" required>
+                                    <option value="">Seleccione Mesa</option>
+                                </select>
                             </div>
                             <div>
                                 <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Fuente</label>
                                 <select id="selectFuenteComp" class="w-full bg-white border border-slate-200 rounded-xl py-3 px-3 text-sm font-semibold outline-none focus:border-brand-gold" required>
                                     <option value="PRECONTEO">Preconteo</option>
                                     <option value="TRANSMISION">Transmisión (E-14)</option>
+                                    <option value="TESTIGO">Testigo Electoral</option>
                                 </select>
                             </div>
                         </div>
@@ -254,6 +257,7 @@ async function cargarTodo() {
             pRes.data.forEach(p => {
                 const o = document.createElement('option');
                 o.value = p.id;
+                o.dataset.mesas = p.mesas || 0;
                 o.textContent = p.nombre_puesto;
                 selPuesto.appendChild(o);
             });
@@ -263,8 +267,22 @@ async function cargarTodo() {
 
 // ---- LOGICA DE COMPARACION DE RESULTADOS ----
 async function cargarComparacionPuesto() {
-    const puesto_id = document.getElementById('selectPuestoComp').value;
+    const selPuesto = document.getElementById('selectPuestoComp');
+    const puesto_id = selPuesto.value;
     const tbody = document.getElementById('tablaComparacion');
+    const selMesa = document.getElementById('selectMesaComp');
+
+    // Popular mesas disponibles
+    if (selPuesto.selectedOptions.length > 0) {
+        const numMesas = parseInt(selPuesto.selectedOptions[0].dataset.mesas) || 0;
+        let mesaHtml = '<option value="">Seleccione Mesa</option>';
+        for (let i = 1; i <= numMesas; i++) {
+            mesaHtml += `<option value="${i}">Mesa ${i}</option>`;
+        }
+        selMesa.innerHTML = mesaHtml;
+    } else {
+        selMesa.innerHTML = '<option value="">Seleccione Mesa</option>';
+    }
     if (!puesto_id) {
         tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-slate-400">Seleccione un Puesto de Votación</td></tr>';
         return;
@@ -327,7 +345,7 @@ document.getElementById('formIngresoResultado').addEventListener('submit', async
 
     const data = {
         puesto_id,
-        mesa: document.getElementById('inputMesaComp').value,
+        mesa: document.getElementById('selectMesaComp').value,
         fuente: document.getElementById('selectFuenteComp').value,
         votos_espriella: document.getElementById('votos_espriella_c').value,
         votos_paloma: document.getElementById('votos_paloma_c').value,
