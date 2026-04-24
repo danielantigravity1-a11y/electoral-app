@@ -282,7 +282,7 @@ async function cargarTodo() {
             pRes.data.forEach(p => {
                 const o = document.createElement('option');
                 o.value = p.id;
-                o.dataset.mesas = p.mesas || 0;
+                o.dataset.mesas = p.mesas_habilitadas || 0;
                 o.textContent = p.nombre_puesto;
                 selPuesto.appendChild(o);
             });
