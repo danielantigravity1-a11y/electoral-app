@@ -10,8 +10,14 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    let searchEmail = email;
+    // Si el input no tiene '@' y parece una cédula (solo números), le agregamos el dominio dummy
+    if (!email.includes('@') && /^[0-9]+$/.test(email)) {
+      searchEmail = `${email}@testigo.electoral`;
+    }
+
     const usuario = await prisma.usuario.findUnique({
-      where: { email },
+      where: { email: searchEmail },
       include: {
         municipio: true
       }

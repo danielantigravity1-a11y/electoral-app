@@ -1,6 +1,7 @@
 const express = require('express');
 const prisma = require('../config/db');
 const { authMiddleware, roleMiddleware } = require('../middleware/auth.middleware');
+const bcrypt = require('bcryptjs');
 
 const router = express.Router();
 
@@ -34,11 +35,12 @@ router.post('/', authMiddleware, roleMiddleware(['SuperAdmin', 'Coordinador_Muni
 
     // Auto-create Testigo user (password = cedula)
     try {
+      const passwordHash = await bcrypt.hash(nuevoTestigo.cedula, 10);
       await prisma.usuario.create({
         data: {
           nombre: nuevoTestigo.nombre,
           email: `${nuevoTestigo.cedula}@testigo.electoral`, // Dummy email if none provided to ensure uniqueness and login pattern
-          password_hash: nuevoTestigo.cedula, // In real world should be hashed
+          password_hash: passwordHash, // Hashed cedula
           rol: 'Testigo_Electoral',
           testigo_id: nuevoTestigo.id,
           municipio_id: nuevoTestigo.puesto.municipio_id
