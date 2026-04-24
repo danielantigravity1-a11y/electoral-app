@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Jurídico - Defensores</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                colors: { brand: { navy: '#0A192F', gold: '#D4AF37', light: '#F8FAFC' } },
+                fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                boxShadow: { 'card': '0 10px 30px -10px rgba(0,0,0,0.05)', 'float': '0 20px 40px -15px rgba(0,0,0,0.05)' }
+            }}
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body class="bg-brand-light font-sans text-brand-navy min-h-screen flex overflow-hidden">
+
+<!-- Sidebar -->
+<aside class="w-72 bg-white border-r border-slate-100 flex flex-col h-screen hidden md:flex shrink-0 z-20">
+    <div class="p-8 flex items-center gap-4">
+        <div class="w-12 h-12 bg-brand-navy rounded-2xl flex items-center justify-center shadow-lg shadow-brand-navy/20">
+            <span class="material-symbols-outlined text-brand-gold">shield</span>
+        </div>
+        <div><h1 class="text-lg font-bold text-brand-navy">Defensores</h1><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plataforma</p></div>
+    </div>
+    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-2">Menú</p>
+        <a href="/dashboard.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
+        <a href="/asignacion.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">how_to_reg</span>Asignación</a>
+        <a href="/comision.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">gavel</span>Comisión Escrutadora</a>
+        <a href="/alertas.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">campaign</span>Alertas</a>
+        <a href="/juridico.html" class="flex items-center gap-4 px-4 py-3.5 bg-slate-50 text-brand-navy rounded-2xl transition-all group border border-slate-100 shadow-sm relative overflow-hidden">
+            <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-gold rounded-r"></div>
+            <span class="material-symbols-outlined text-brand-gold">balance</span><span class="font-semibold text-sm">Panel Jurídico</span>
+        </a>
+        <a href="/usuarios.html" id="menu-usuarios" class="hidden flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">group</span>Usuarios</a>
+    </nav>
+    <div class="p-6 border-t border-slate-100">
+        <div class="bg-slate-50 rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
+            <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center font-bold text-brand-navy" id="userAvatar">A</div>
+            <div class="flex-1 min-w-0"><p class="text-sm font-bold truncate" id="userName">Admin</p><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" id="userRole">Rol</p></div>
+        </div>
+        <button onclick="api.auth.logout();window.location.href='/'" class="w-full mt-4 flex items-center gap-3 px-4 py-3 text-slate-500 rounded-2xl hover:bg-red-50 hover:text-red-600 transition-all"><span class="material-symbols-outlined">logout</span><span class="font-semibold text-sm">Cerrar Sesión</span></button>
+    </div>
+</aside>
+
+<!-- Main -->
+<main class="flex-1 flex flex-col h-screen overflow-hidden">
+    <header class="bg-white/80 backdrop-blur-xl border-b border-slate-100 px-8 py-6 flex justify-between items-center shrink-0">
+        <div>
+            <div class="flex items-center gap-2 text-sm font-semibold text-slate-400 mb-1"><span class="material-symbols-outlined text-lg">home</span><span class="material-symbols-outlined text-lg">chevron_right</span><span>Jurídico</span></div>
+            <h2 class="text-3xl font-black text-brand-navy tracking-tight">Panel Jurídico</h2>
+            <p class="text-slate-500 text-sm mt-1">Mesas con alertas, reportes y formatos de reclamación</p>
+        </div>
+        <div class="flex gap-3">
+            <select id="filtroMunicipio" onchange="cargarTodo()" class="bg-slate-50 border border-slate-200 rounded-xl py-2 px-4 text-sm font-semibold outline-none focus:border-brand-gold"><option value="">Todos los Municipios</option></select>
+            <button onclick="cargarTodo()" class="bg-white border border-slate-200 hover:bg-slate-50 p-2 rounded-xl shadow-sm"><span class="material-symbols-outlined">refresh</span></button>
+        </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto p-8 space-y-8">
+
+        <!-- Reportes y Exportaciones -->
+        <section>
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-slate-400">download</span>Reportes y Exportaciones</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <button onclick="window.open(api.reportes.testigos('xlsx'),'_blank')" class="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-float transition-all text-left">
+                    <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center border border-green-100 group-hover:bg-green-500 transition-colors"><span class="material-symbols-outlined text-green-600 group-hover:text-white">table</span></div>
+                    <div><h4 class="font-bold text-sm">Testigos Excel</h4><p class="text-slate-500 text-xs">Por Zona/Puesto</p></div>
+                </button>
+                <button onclick="window.open(api.reportes.testigos('pdf'),'_blank')" class="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-float transition-all text-left">
+                    <div class="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center border border-red-100 group-hover:bg-red-500 transition-colors"><span class="material-symbols-outlined text-red-600 group-hover:text-white">picture_as_pdf</span></div>
+                    <div><h4 class="font-bold text-sm">Testigos PDF</h4><p class="text-slate-500 text-xs">Por Zona/Puesto</p></div>
+                </button>
+                <button onclick="window.open(api.reportes.comisiones('xlsx'),'_blank')" class="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-float transition-all text-left">
+                    <div class="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center border border-indigo-100 group-hover:bg-indigo-500 transition-colors"><span class="material-symbols-outlined text-indigo-600 group-hover:text-white">groups</span></div>
+                    <div><h4 class="font-bold text-sm">Comisiones Excel</h4><p class="text-slate-500 text-xs">Escrutadoras</p></div>
+                </button>
+                <button onclick="window.open(api.reportes.comisiones('pdf'),'_blank')" class="group flex items-center gap-4 p-5 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-float transition-all text-left">
+                    <div class="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center border border-amber-100 group-hover:bg-amber-500 transition-colors"><span class="material-symbols-outlined text-amber-600 group-hover:text-white">picture_as_pdf</span></div>
+                    <div><h4 class="font-bold text-sm">Comisiones PDF</h4><p class="text-slate-500 text-xs">Escrutadoras</p></div>
+                </button>
+            </div>
+        </section>
+
+        <!-- Mesas con Alertas agrupadas por Puesto -->
+        <section>
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-red-400">warning</span>Mesas con Alertas por Puesto</h2>
+            <div id="alertasAgrupadas" class="space-y-4">
+                <div class="py-10 text-center text-slate-400"><span class="material-symbols-outlined animate-spin text-4xl mb-2">refresh</span><p>Cargando...</p></div>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+<script src="/js/api.js"></script>
+<script>
+const { jsPDF } = window.jspdf;
+let allAlertas = [];
+
+document.addEventListener('DOMContentLoaded', async () => {
+    if (!api.auth.isAuthenticated()) { window.location.href = '/'; return; }
+    const u = api.auth.getUser();
+    document.getElementById('userName').textContent = u.nombre;
+    document.getElementById('userRole').textContent = u.rol.replace('_', ' ');
+    document.getElementById('userAvatar').textContent = u.nombre.charAt(0).toUpperCase();
+    if (u.rol === 'SuperAdmin') { document.getElementById('menu-usuarios').classList.remove('hidden'); document.getElementById('menu-usuarios').classList.add('flex'); }
+    await loadMunicipios();
+    await cargarTodo();
+});
+
+async function loadMunicipios() {
+    const res = await api.divipole.getMunicipios();
+    if (res.success) {
+        const sel = document.getElementById('filtroMunicipio');
+        res.data.forEach(m => { const o = document.createElement('option'); o.value = m.id; o.textContent = m.nombre; sel.appendChild(o); });
+    }
+}
+
+async function cargarTodo() {
+    const mid = document.getElementById('filtroMunicipio').value;
+    const res = await fetchAPI(`/alertas${mid ? '?municipio_id='+mid : ''}`);
+    if (!res.success) return;
+    allAlertas = res.data;
+    renderAlertasAgrupadas();
+}
+
+function renderAlertasAgrupadas() {
+    const container = document.getElementById('alertasAgrupadas');
+    if (allAlertas.length === 0) {
+        container.innerHTML = '<div class="py-16 text-center bg-white rounded-3xl border border-slate-100"><span class="material-symbols-outlined text-6xl text-slate-200 mb-4">verified</span><p class="text-xl font-bold">Sin alertas reportadas</p><p class="text-slate-500 text-sm mt-1">No hay mesas con problemas en este momento.</p></div>';
+        return;
+    }
+
+    // Group by puesto
+    const grouped = {};
+    allAlertas.forEach(a => {
+        const pName = a.puesto?.nombre_puesto || 'Desconocido';
+        const pMuni = a.puesto?.municipio?.nombre || '';
+        const key = `${pMuni} > ${pName}`;
+        if (!grouped[key]) grouped[key] = { municipio: pMuni, puesto: pName, alertas: [] };
+        grouped[key].alertas.push(a);
+    });
+
+    container.innerHTML = Object.keys(grouped).sort().map(key => {
+        const g = grouped[key];
+        const pendientes = g.alertas.filter(a => a.estado === 'Pendiente').length;
+        const enRevision = g.alertas.filter(a => a.estado === 'En_Revision').length;
+        return `
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-card overflow-hidden">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center cursor-pointer" onclick="this.parentElement.querySelector('.alert-body').classList.toggle('hidden')">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center"><span class="material-symbols-outlined text-red-500">location_on</span></div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${g.municipio}</p>
+                        <h3 class="font-bold text-lg text-brand-navy">${g.puesto}</h3>
+                    </div>
+                </div>
+                <div class="flex gap-2 items-center">
+                    ${pendientes > 0 ? `<span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-xs font-bold">${pendientes} pendiente${pendientes>1?'s':''}</span>` : ''}
+                    ${enRevision > 0 ? `<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">${enRevision} en revisión</span>` : ''}
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">${g.alertas.length} total</span>
+                    <span class="material-symbols-outlined text-slate-400">expand_more</span>
+                </div>
+            </div>
+            <div class="alert-body p-4 space-y-3">
+                ${g.alertas.map(a => renderAlertaCard(a)).join('')}
+                <button onclick="generarPDFReclamacion('${key}')" class="w-full py-3 bg-brand-navy hover:bg-slate-800 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2 mt-2">
+                    <span class="material-symbols-outlined">picture_as_pdf</span> Generar Formato de Reclamación (PDF)
+                </button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderAlertaCard(a) {
+    const colors = { Pendiente: 'red', En_Revision: 'blue', Resuelta: 'green' };
+    const c = colors[a.estado] || 'slate';
+    return `
+    <div class="flex items-start gap-4 p-4 bg-${c}-50 rounded-2xl border border-${c}-100">
+        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+            <span class="font-black text-brand-navy text-lg">${a.mesa}</span>
+        </div>
+        <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+                <h4 class="font-bold text-sm text-${c}-800">${a.tipo_alerta}</h4>
+                <span class="px-2 py-0.5 bg-white rounded-full text-[10px] font-bold text-${c}-600 border border-${c}-200">${a.estado.replace('_',' ')}</span>
+            </div>
+            <p class="text-xs text-slate-600 italic">"${a.descripcion}"</p>
+            <div class="flex gap-3 mt-2 text-[10px] text-slate-400">
+                <span>Reportó: ${a.usuario?.nombre || 'Testigo'}</span>
+                <span>${new Date(a.created_at).toLocaleString('es-CO')}</span>
+                ${a.foto_url ? `<a href="${a.foto_url}" target="_blank" class="text-blue-600 font-bold flex items-center gap-1"><span class="material-symbols-outlined text-xs">photo</span>Ver Evidencia</a>` : ''}
+            </div>
+        </div>
+    </div>`;
+}
+
+function generarPDFReclamacion(puestoKey) {
+    const g = {};
+    allAlertas.forEach(a => {
+        const pName = a.puesto?.nombre_puesto || 'Desconocido';
+        const pMuni = a.puesto?.municipio?.nombre || '';
+        const key = `${pMuni} > ${pName}`;
+        if (!g[key]) g[key] = { municipio: pMuni, puesto: pName, alertas: [] };
+        g[key].alertas.push(a);
+    });
+
+    const data = g[puestoKey];
+    if (!data) { alert('No se encontraron alertas para este puesto.'); return; }
+
+    const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'letter' });
+    const w = doc.internal.pageSize.getWidth();
+    let y = 15;
+
+    // Header
+    doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+    doc.text('FORMATO DE RECLAMACIÓN ANTE JURADOS DE VOTACIÓN', w/2, y, { align: 'center' }); y += 6;
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+    doc.text('(Artículos 122 y 192 del Código Electoral)', w/2, y, { align: 'center' }); y += 10;
+
+    // Puesto info
+    doc.setDrawColor(200); doc.setLineWidth(0.3);
+    doc.rect(15, y, w-30, 20); y += 5;
+    doc.setFontSize(10); doc.setFont('helvetica', 'bold');
+    doc.text(`Municipio: ${data.municipio}`, 20, y); y += 6;
+    doc.text(`Puesto de Votación: ${data.puesto}`, 20, y); y += 6;
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Fecha: ${new Date().toLocaleDateString('es-CO')}`, 20, y); y += 8;
+
+    // Instructions
+    doc.setFontSize(9); doc.setFont('helvetica', 'italic');
+    doc.text('Marque con una X las causales que aplican a esta reclamación:', 15, y); y += 7;
+
+    // Causales with checkboxes
+    data.alertas.forEach((a, i) => {
+        if (y > 250) { doc.addPage(); y = 20; }
+        doc.setFont('helvetica', 'bold'); doc.setFontSize(10);
+        doc.rect(15, y-4, 5, 5); // Checkbox
+        doc.text(`Mesa ${a.mesa}: ${a.tipo_alerta}`, 23, y); y += 5;
+        doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
+        const desc = doc.splitTextToSize(`Detalles: "${a.descripcion}"`, w-45);
+        doc.text(desc, 23, y); y += desc.length * 4 + 4;
+        doc.setDrawColor(230); doc.line(15, y-2, w-15, y-2); y += 2;
+    });
+
+    y += 10;
+    if (y > 230) { doc.addPage(); y = 20; }
+
+    // Signature area
+    doc.setDrawColor(100); doc.setLineWidth(0.5);
+    doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+    doc.text('Observaciones adicionales:', 15, y); y += 15;
+    doc.line(15, y, w/2-5, y); doc.line(w/2+5, y, w-15, y); y += 5;
+
+    doc.setFontSize(8); doc.setFont('helvetica', 'bold');
+    doc.text('Firma del Testigo Electoral', 15, y);
+    doc.text('Firma del Presidente de Mesa', w/2+5, y); y += 4;
+    doc.setFont('helvetica', 'normal');
+    doc.text('CC:', 15, y); doc.text('CC:', w/2+5, y); y += 10;
+
+    doc.line(15, y, w/2-5, y); doc.line(w/2+5, y, w-15, y); y += 5;
+    doc.setFont('helvetica', 'bold');
+    doc.text('Firma Jurado 2', 15, y);
+    doc.text('Firma Jurado 3', w/2+5, y);
+
+    // Footer
+    doc.setFontSize(7); doc.setFont('helvetica', 'italic');
+    doc.text('Documento generado por Plataforma Defensores - Control Electoral Sucre', w/2, 270, { align: 'center' });
+
+    doc.save(`Reclamacion_${data.puesto.replace(/\s/g,'_')}_${Date.now()}.pdf`);
+}
+</script>
+</body>
+</html>

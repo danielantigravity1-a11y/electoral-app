@@ -114,6 +114,7 @@ model AlertasMesa {
   mesa          Int
   reportado_por String
   usuario       Usuario      @relation(fields: [reportado_por], references: [id])
+  foto_url      String?
   estado        EstadoAlerta @default(Pendiente)
   created_at    DateTime     @default(now())
 }

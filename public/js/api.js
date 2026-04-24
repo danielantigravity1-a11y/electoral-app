@@ -67,7 +67,8 @@ const api = {
         delete: (id) => fetchAPI(`/usuarios/${id}`, { method: 'DELETE' })
     },
     reportes: {
-        testigos: (formato) => `${API_BASE_URL}/reportes/testigos?formato=${formato}`
+        testigos: (formato) => `${API_BASE_URL}/reportes/testigos?formato=${formato}`,
+        comisiones: (formato) => `${API_BASE_URL}/reportes/comisiones?formato=${formato}`
     },
     e14: {
         upload: (data) => fetchAPI('/e14/upload', { method: 'POST', body: JSON.stringify(data) }),

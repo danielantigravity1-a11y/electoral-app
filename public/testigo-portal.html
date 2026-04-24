@@ -182,6 +182,23 @@
                     <input type="hidden" id="puesto_id">
                     <input type="hidden" id="mesa">
 
+                    <!-- Foto de Evidencia -->
+                    <div class="space-y-2">
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider ml-1">📸 Foto de Evidencia (Opcional)</label>
+                        <p class="text-[11px] text-slate-500 ml-1">Suba la foto del formato de reclamación que presentó ante la mesa o ante la justicia.</p>
+                        <input type="file" id="alertaFotoInput" accept="image/*" capture="environment" class="hidden" onchange="previewAlertaFoto(this)">
+                        <button type="button" onclick="document.getElementById('alertaFotoInput').click()" id="btnTomarFotoAlerta" class="w-full bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-4 flex items-center justify-center gap-3 text-slate-500 hover:bg-blue-50 hover:border-blue-300 transition-all">
+                            <span class="material-symbols-outlined text-2xl">add_a_photo</span>
+                            <span class="font-semibold text-sm">Tomar foto o adjuntar archivo</span>
+                        </button>
+                        <div id="alertaFotoPreview" class="hidden relative">
+                            <img id="alertaFotoImg" class="w-full max-h-[150px] object-contain rounded-2xl border border-slate-200 bg-slate-100">
+                            <button type="button" onclick="cancelAlertaFoto()" class="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full shadow-lg">
+                                <span class="material-symbols-outlined text-sm">close</span>
+                            </button>
+                        </div>
+                    </div>
+
                     <div id="error-msg" class="hidden text-sm font-medium text-red-500 bg-red-50 p-3 rounded-xl border border-red-100"></div>
                 </form>
             </div>
@@ -334,7 +351,8 @@
                 puesto_id: document.getElementById('puesto_id').value,
                 mesa: document.getElementById('mesa').value || '1',
                 descripcion: document.getElementById('descripcion').value,
-                tipo_alerta: causalSelect.value
+                tipo_alerta: causalSelect.value,
+                foto_base64: alertaFotoBase64 || null
             };
 
             try {
@@ -361,6 +379,29 @@
         function logout() {
             api.auth.logout();
             window.location.href = '/';
+        }
+
+        // ---- Alerta Photo Evidence ----
+        let alertaFotoBase64 = null;
+
+        function previewAlertaFoto(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                alertaFotoBase64 = e.target.result;
+                document.getElementById('alertaFotoImg').src = alertaFotoBase64;
+                document.getElementById('alertaFotoPreview').classList.remove('hidden');
+                document.getElementById('btnTomarFotoAlerta').classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function cancelAlertaFoto() {
+            alertaFotoBase64 = null;
+            document.getElementById('alertaFotoPreview').classList.add('hidden');
+            document.getElementById('btnTomarFotoAlerta').classList.remove('hidden');
+            document.getElementById('alertaFotoInput').value = '';
         }
 
         // ---- E-14 Upload Logic ----
