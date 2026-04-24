@@ -4,21 +4,22 @@ const { authMiddleware } = require('../middleware/auth.middleware');
 const router = express.Router();
 
 const CANDIDATOS = [
-  { key: 'votos_espriella', nombre: 'Abelardo de la Espriella' },
-  { key: 'votos_paloma', nombre: 'Paloma Valencia' },
   { key: 'votos_cepeda', nombre: 'Iván Cepeda' },
-  { key: 'votos_lizcano', nombre: 'Mauricio Lizcano' },
-  { key: 'votos_murillo', nombre: 'Luis Gilberto Murillo' },
-  { key: 'votos_caicedo', nombre: 'Carlos Caicedo' },
-  { key: 'votos_macollins', nombre: 'Sondra Macollins' },
+  { key: 'votos_claudia', nombre: 'Claudia López' },
   { key: 'votos_botero', nombre: 'Santiago Botero' },
+  { key: 'votos_espriella', nombre: 'Abelardo de la Espriella' },
+  { key: 'votos_lizcano', nombre: 'Mauricio Lizcano' },
+  { key: 'votos_macollins', nombre: 'Sondra Macollins' },
+  { key: 'votos_caicedo', nombre: 'Carlos Caicedo' },
+  { key: 'votos_paloma', nombre: 'Paloma Valencia' },
+  { key: 'votos_murillo', nombre: 'Luis Gilberto Murillo' }
 ];
 
 // POST /api/resultados — Upsert resultado por puesto+mesa+fuente
 router.post('/', authMiddleware, async (req, res) => {
   const { puesto_id, mesa, fuente, votos_espriella, votos_paloma, votos_cepeda,
-    votos_lizcano, votos_murillo, votos_caicedo, votos_macollins, votos_botero,
-    votos_blanco, votos_nulos, votos_total } = req.body;
+    votos_claudia, votos_lizcano, votos_murillo, votos_caicedo, votos_macollins, votos_botero,
+    votos_blanco, votos_nulos, votos_no_marcados, votos_total } = req.body;
 
   if (!puesto_id || !mesa || !fuente) {
     return res.status(400).json({ success: false, message: 'Faltan puesto_id, mesa o fuente' });
@@ -32,6 +33,7 @@ router.post('/', authMiddleware, async (req, res) => {
       votos_espriella: parseInt(votos_espriella) || 0,
       votos_paloma: parseInt(votos_paloma) || 0,
       votos_cepeda: parseInt(votos_cepeda) || 0,
+      votos_claudia: parseInt(votos_claudia) || 0,
       votos_lizcano: parseInt(votos_lizcano) || 0,
       votos_murillo: parseInt(votos_murillo) || 0,
       votos_caicedo: parseInt(votos_caicedo) || 0,
@@ -39,6 +41,7 @@ router.post('/', authMiddleware, async (req, res) => {
       votos_botero: parseInt(votos_botero) || 0,
       votos_blanco: parseInt(votos_blanco) || 0,
       votos_nulos: parseInt(votos_nulos) || 0,
+      votos_no_marcados: parseInt(votos_no_marcados) || 0,
       votos_total: parseInt(votos_total) || 0,
       registrado_por: req.user.id
     };
@@ -112,6 +115,7 @@ router.get('/comparar', authMiddleware, async (req, res) => {
           }
           if (first.votos_blanco !== other.votos_blanco) discrepancia = true;
           if (first.votos_nulos !== other.votos_nulos) discrepancia = true;
+          if (first.votos_no_marcados !== other.votos_no_marcados) discrepancia = true;
           if (first.votos_total !== other.votos_total) discrepancia = true;
         }
       }
@@ -146,12 +150,14 @@ router.get('/resumen', authMiddleware, async (req, res) => {
         CANDIDATOS.forEach(c => resumen[r.fuente][c.key] = 0);
         resumen[r.fuente].votos_blanco = 0;
         resumen[r.fuente].votos_nulos = 0;
+        resumen[r.fuente].votos_no_marcados = 0;
         resumen[r.fuente].votos_total = 0;
       }
       resumen[r.fuente].mesas++;
       CANDIDATOS.forEach(c => resumen[r.fuente][c.key] += r[c.key]);
       resumen[r.fuente].votos_blanco += r.votos_blanco;
       resumen[r.fuente].votos_nulos += r.votos_nulos;
+      resumen[r.fuente].votos_no_marcados += r.votos_no_marcados;
       resumen[r.fuente].votos_total += r.votos_total;
     });
 

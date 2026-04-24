@@ -110,6 +110,16 @@
                     </div>
 
                     <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <span class="font-medium text-slate-600 text-sm">Claudia López</span>
+                        <input type="number" id="votos_claudia" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <span class="font-medium text-slate-600 text-sm">Sergio Fajardo</span>
+                        <input type="number" id="votos_fajardo" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
                         <span class="font-medium text-slate-600 text-sm">Luis Gilberto Murillo</span>
                         <input type="number" id="votos_murillo" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
                     </div>
@@ -135,7 +145,7 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+                <div class="grid grid-cols-3 gap-3 pt-3 border-t border-slate-100">
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">En Blanco</label>
                         <input type="number" id="votos_blanco" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
@@ -143,6 +153,10 @@
                     <div>
                         <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nulos</label>
                         <input type="number" id="votos_nulos" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1 whitespace-nowrap">No Marcados</label>
+                        <input type="number" id="votos_no_marcados" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
                     </div>
                 </div>
 
@@ -608,6 +622,8 @@
                 votos_espriella: document.getElementById('votos_espriella').value,
                 votos_paloma: document.getElementById('votos_paloma').value,
                 votos_cepeda: document.getElementById('votos_cepeda').value,
+                votos_claudia: document.getElementById('votos_claudia').value,
+                votos_fajardo: document.getElementById('votos_fajardo').value,
                 votos_murillo: document.getElementById('votos_murillo').value,
                 votos_caicedo: document.getElementById('votos_caicedo').value,
                 votos_lizcano: document.getElementById('votos_lizcano').value || 0,
@@ -615,6 +631,7 @@
                 votos_botero: document.getElementById('votos_botero').value || 0,
                 votos_blanco: document.getElementById('votos_blanco').value,
                 votos_nulos: document.getElementById('votos_nulos').value,
+                votos_no_marcados: document.getElementById('votos_no_marcados').value,
                 votos_total: document.getElementById('votos_total').value
             };
 

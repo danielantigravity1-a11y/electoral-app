@@ -144,6 +144,14 @@
                                 <input type="number" id="votos_cepeda_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
                             </div>
                             <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-xs text-slate-600">Claudia López</span>
+                                <input type="number" id="votos_claudia_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-xs text-slate-600">Sergio Fajardo</span>
+                                <input type="number" id="votos_fajardo_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
                                 <span class="font-medium text-xs text-slate-600">Luis G. Murillo</span>
                                 <input type="number" id="votos_murillo_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
                             </div>
@@ -164,11 +172,12 @@
                                 <input type="number" id="votos_botero_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
                             </div>
                             
-                            <div class="grid grid-cols-2 gap-2 mt-2">
+                            <div class="grid grid-cols-3 gap-2 mt-2">
                                 <div><label class="text-[9px] font-bold text-slate-400">BLANCOS</label><input type="number" id="votos_blanco_c" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center" required></div>
                                 <div><label class="text-[9px] font-bold text-slate-400">NULOS</label><input type="number" id="votos_nulos_c" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center" required></div>
+                                <div><label class="text-[9px] font-bold text-slate-400">NO MARCADOS</label><input type="number" id="votos_no_marcados_c" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center" required></div>
                             </div>
-                            <div>
+                            <div class="mt-2">
                                 <label class="text-[9px] font-bold text-slate-400">TOTAL</label>
                                 <input type="number" id="votos_total_c" class="w-full bg-slate-100 border border-slate-200 rounded-lg px-2 py-2 font-bold text-center" required>
                             </div>
@@ -350,6 +359,8 @@ document.getElementById('formIngresoResultado').addEventListener('submit', async
         votos_espriella: document.getElementById('votos_espriella_c').value,
         votos_paloma: document.getElementById('votos_paloma_c').value,
         votos_cepeda: document.getElementById('votos_cepeda_c').value,
+        votos_claudia: document.getElementById('votos_claudia_c').value,
+        votos_fajardo: document.getElementById('votos_fajardo_c').value,
         votos_murillo: document.getElementById('votos_murillo_c').value,
         votos_caicedo: document.getElementById('votos_caicedo_c').value,
         votos_lizcano: document.getElementById('votos_lizcano_c').value || 0,
@@ -357,6 +368,7 @@ document.getElementById('formIngresoResultado').addEventListener('submit', async
         votos_botero: document.getElementById('votos_botero_c').value || 0,
         votos_blanco: document.getElementById('votos_blanco_c').value,
         votos_nulos: document.getElementById('votos_nulos_c').value,
+        votos_no_marcados: document.getElementById('votos_no_marcados_c').value,
         votos_total: document.getElementById('votos_total_c').value
     };
 
