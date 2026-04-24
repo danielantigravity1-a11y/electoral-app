@@ -51,6 +51,7 @@ model Divipole {
   testigos_asignados Testigo[]  @relation("PuestoAsignado")
   testigos_votantes  Testigo[]  @relation("PuestoVotacion")
   alertas        AlertasMesa[]
+  actas_e14      ActaE14[]
 
   @@unique([municipio_id, zona, codigo_puesto])
 }
@@ -75,6 +76,7 @@ model Testigo {
   usuario            Usuario?
   comision_titular   ComisionEscrutadora? @relation("ComisionTitular")
   comision_suplente  ComisionEscrutadora? @relation("ComisionSuplente")
+  actas_e14          ActaE14[]
   created_at         DateTime      @default(now())
 }
 
@@ -120,4 +122,23 @@ enum EstadoAlerta {
   Pendiente
   En_Revision
   Resuelta
+}
+
+model ActaE14 {
+  id            String       @id @default(uuid())
+  testigo_id    String
+  testigo       Testigo      @relation(fields: [testigo_id], references: [id])
+  puesto_id     String
+  puesto        Divipole     @relation(fields: [puesto_id], references: [id])
+  mesa          Int
+  imagen_url    String
+  ocr_data      Json?
+  estado        EstadoE14    @default(Recibida)
+  created_at    DateTime     @default(now())
+}
+
+enum EstadoE14 {
+  Recibida
+  Procesada_OCR
+  Error_Lectura
 }

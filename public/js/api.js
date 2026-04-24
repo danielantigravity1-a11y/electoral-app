@@ -68,6 +68,11 @@ const api = {
     },
     reportes: {
         testigos: (formato) => `${API_BASE_URL}/reportes/testigos?formato=${formato}`
+    },
+    e14: {
+        upload: (data) => fetchAPI('/e14/upload', { method: 'POST', body: JSON.stringify(data) }),
+        misActas: () => fetchAPI('/e14/mis-actas'),
+        todas: () => fetchAPI('/e14/todas')
     }
 };
 

@@ -70,6 +70,51 @@
                 <p class="text-red-100 text-sm mt-1">Radicar una anomalía oficial (Cód. Electoral)</p>
             </div>
         </button>
+
+        <!-- Tarjeta Subir E-14 -->
+        <div class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-blue-500 text-lg">photo_camera</span>
+                Subir Foto del E-14
+            </h2>
+            <p class="text-xs text-slate-500 mb-4">Tome una foto clara del formulario E-14 de su mesa al finalizar el conteo. La imagen se guardará en calidad original para posterior análisis por IA.</p>
+
+            <!-- Input cámara oculto -->
+            <input type="file" id="e14FileInput" accept="image/*" capture="environment" class="hidden" onchange="previewE14(this)">
+
+            <!-- Botón para tomar foto -->
+            <button id="btnTomarFoto" onclick="document.getElementById('e14FileInput').click()" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 active:from-blue-600 active:to-indigo-700 text-white p-5 rounded-2xl shadow-lg shadow-blue-500/20 flex items-center justify-center gap-3 transition-all">
+                <span class="material-symbols-outlined text-3xl">photo_camera</span>
+                <div class="text-left">
+                    <h3 class="font-bold text-lg">Tomar Foto del E-14</h3>
+                    <p class="text-blue-100 text-xs">Se abrirá la cámara de su celular</p>
+                </div>
+            </button>
+
+            <!-- Vista previa -->
+            <div id="e14Preview" class="hidden mt-4 space-y-4">
+                <div class="relative rounded-2xl overflow-hidden border-2 border-blue-200 shadow-inner">
+                    <img id="e14PreviewImg" class="w-full max-h-[300px] object-contain bg-slate-100">
+                    <button onclick="cancelE14()" class="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full shadow-lg">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="flex-1 bg-slate-50 rounded-xl p-3 border border-slate-200">
+                        <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">Mesa del E-14</label>
+                        <input type="number" id="e14Mesa" class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-brand-navy font-bold text-lg outline-none focus:border-blue-400" placeholder="Nro." min="1">
+                    </div>
+                    <button id="btnEnviarE14" onclick="enviarE14()" class="flex-1 bg-brand-navy active:bg-slate-800 text-white font-bold py-4 rounded-xl transition-colors shadow-lg flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined">cloud_upload</span>
+                        <span>Enviar E-14</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Historial de E-14 subidos -->
+            <div id="e14History" class="mt-4"></div>
+        </div>
     </main>
 
     <!-- Modal Reporte con Causales -->
@@ -318,7 +363,102 @@
             window.location.href = '/';
         }
 
+        // ---- E-14 Upload Logic ----
+        let e14Base64 = null;
+
+        function previewE14(input) {
+            const file = input.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                e14Base64 = e.target.result;
+                document.getElementById('e14PreviewImg').src = e14Base64;
+                document.getElementById('e14Preview').classList.remove('hidden');
+                document.getElementById('btnTomarFoto').classList.add('hidden');
+
+                // Pre-fill mesa if we have it
+                if (testigoInfo && testigoInfo.mesa) {
+                    document.getElementById('e14Mesa').value = testigoInfo.mesa;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function cancelE14() {
+            e14Base64 = null;
+            document.getElementById('e14Preview').classList.add('hidden');
+            document.getElementById('btnTomarFoto').classList.remove('hidden');
+            document.getElementById('e14FileInput').value = '';
+        }
+
+        async function enviarE14() {
+            if (!e14Base64) { alert('Tome una foto primero.'); return; }
+            if (!testigoInfo || !testigoInfo.puesto_id) { alert('No tiene puesto asignado.'); return; }
+
+            const mesa = document.getElementById('e14Mesa').value;
+            if (!mesa) { alert('Ingrese el número de mesa del E-14.'); return; }
+
+            const btn = document.getElementById('btnEnviarE14');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span><span>Subiendo...</span>';
+
+            try {
+                const res = await api.e14.upload({
+                    imagen_base64: e14Base64,
+                    mesa: parseInt(mesa)
+                });
+
+                if (res.success) {
+                    alert('✅ Foto del E-14 subida correctamente. Ya está guardada en el sistema.');
+                    cancelE14();
+                    cargarHistorialE14();
+                } else {
+                    alert(res.message || 'Error al subir la foto.');
+                }
+            } catch (err) {
+                alert('Error de conexión al subir la foto.');
+            }
+
+            btn.disabled = false;
+            btn.innerHTML = '<span class="material-symbols-outlined">cloud_upload</span><span>Enviar E-14</span>';
+        }
+
+        async function cargarHistorialE14() {
+            const container = document.getElementById('e14History');
+            try {
+                const res = await api.e14.misActas();
+                if (res.success && res.data.length > 0) {
+                    container.innerHTML = `
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-sm text-green-500">inventory_2</span>
+                            E-14 Enviados (${res.data.length})
+                        </h3>
+                        <div class="space-y-2">
+                            ${res.data.map(a => `
+                                <a href="${a.imagen_url}" target="_blank" class="flex items-center gap-3 p-3 bg-green-50 rounded-xl border border-green-100 hover:bg-green-100 transition-colors">
+                                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center shrink-0">
+                                        <span class="material-symbols-outlined text-green-600">description</span>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="font-bold text-brand-navy text-sm">Mesa ${a.mesa}</p>
+                                        <p class="text-[10px] text-slate-500">${new Date(a.created_at).toLocaleString('es-CO')}</p>
+                                    </div>
+                                    <span class="px-2 py-1 bg-green-100 text-green-700 rounded-lg text-[10px] font-bold">${a.estado}</span>
+                                </a>
+                            `).join('')}
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = '';
+                }
+            } catch (e) {
+                console.error('Error al cargar historial E-14:', e);
+            }
+        }
+
         cargarAsignacion();
+        cargarHistorialE14();
     </script>
 </body>
 </html>
