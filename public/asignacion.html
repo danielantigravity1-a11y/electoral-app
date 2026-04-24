@@ -267,82 +267,140 @@
 <div id="testigoModal" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-brand-navy/40 backdrop-blur-sm transition-opacity" onclick="closeTestigoModal()"></div>
     <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-full max-w-2xl bg-white rounded-[32px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        <!-- Header -->
-        <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-            <h3 class="text-xl font-bold text-brand-navy flex items-center gap-2">
-                <span class="material-symbols-outlined text-brand-gold">badge</span>
-                Detalles del Testigo
-            </h3>
-            <div class="flex items-center gap-2">
-                <button id="btnEditModal" onclick="toggleEditMode()" class="p-2 text-slate-400 hover:text-brand-navy hover:bg-white rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200">
-                    <span class="material-symbols-outlined">edit</span>
-                </button>
-                <button onclick="closeTestigoModal()" class="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200">
-                    <span class="material-symbols-outlined">close</span>
-                </button>
+
+        <!-- ===== VIEW MODE ===== -->
+        <div id="viewMode">
+            <!-- Profile Header -->
+            <div class="bg-gradient-to-br from-brand-navy to-[#132F4C] px-8 py-7 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-40 h-40 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+                <div class="absolute bottom-0 left-0 w-24 h-24 bg-brand-gold/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+                <div class="flex items-center gap-5 relative z-10">
+                    <div class="w-16 h-16 bg-white/10 backdrop-blur-sm border-2 border-white/20 rounded-2xl flex items-center justify-center text-2xl font-black text-white" id="viewAvatar">D</div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-black text-white tracking-tight" id="viewNombre">Nombre</h3>
+                        <p class="text-white/60 text-sm font-medium mt-0.5">Testigo Electoral</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span id="viewEstado" class="px-3 py-1.5 bg-green-400/20 text-green-300 rounded-full text-xs font-bold border border-green-400/20">Activo</span>
+                        <button onclick="toggleEditMode()" class="p-2.5 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-all" title="Editar">
+                            <span class="material-symbols-outlined text-xl">edit</span>
+                        </button>
+                        <button onclick="closeTestigoModal()" class="p-2.5 text-white/60 hover:text-white hover:bg-white/10 rounded-xl transition-all">
+                            <span class="material-symbols-outlined text-xl">close</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-        </div>
-        <!-- Body -->
-        <div class="p-8 overflow-y-auto flex-1">
-            <form id="modalForm" class="space-y-6">
-                <input type="hidden" id="modalId">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div class="space-y-1.5">
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Cédula</label>
-                        <input type="text" id="modalCedula" readonly class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-brand-navy font-bold opacity-70">
-                        <p class="text-[10px] text-slate-400 ml-1">No editable (Credenciales de acceso)</p>
+            <!-- Info Body -->
+            <div class="p-8 overflow-y-auto" style="max-height: 55vh;">
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div class="w-10 h-10 bg-brand-navy/5 rounded-xl flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-brand-navy text-lg">badge</span></div>
+                        <div class="min-w-0"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cédula</p><p class="font-bold text-brand-navy text-sm truncate" id="viewCedula">—</p></div>
                     </div>
-                    <div class="space-y-1.5">
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
-                        <input type="text" id="modalNombre" readonly class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input transition-all">
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div class="w-10 h-10 bg-brand-navy/5 rounded-xl flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-brand-navy text-lg">call</span></div>
+                        <div class="min-w-0"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Celular</p><p class="font-bold text-brand-navy text-sm truncate" id="viewTelefono">—</p></div>
                     </div>
-                    <div class="space-y-1.5">
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Celular</label>
-                        <input type="tel" id="modalTelefono" readonly class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input transition-all">
-                    </div>
-                    <div class="space-y-1.5">
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
-                        <input type="email" id="modalEmail" readonly class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input transition-all">
+                    <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-2xl border border-slate-100 col-span-2">
+                        <div class="w-10 h-10 bg-brand-navy/5 rounded-xl flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-brand-navy text-lg">mail</span></div>
+                        <div class="min-w-0"><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Correo Electrónico</p><p class="font-bold text-brand-navy text-sm truncate" id="viewEmail">—</p></div>
                     </div>
                 </div>
 
-                <div class="pt-6 border-t border-slate-100">
-                    <h4 class="text-sm font-bold text-brand-navy mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-sm">assignment_ind</span>Asignación (Misión)</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="space-y-1.5">
-                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Municipio Asignado</label>
-                            <select id="modalMuni" disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input appearance-none">
-                                <option value="">Seleccione...</option>
-                            </select>
+                <!-- Mission Card -->
+                <div class="bg-gradient-to-br from-brand-gold/5 to-amber-50 rounded-2xl border border-brand-gold/15 p-5">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="material-symbols-outlined text-brand-gold">assignment_ind</span>
+                        <h4 class="text-sm font-black text-brand-navy uppercase tracking-wide">Asignación de Vigilancia</h4>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="bg-white rounded-xl p-4 text-center shadow-sm border border-slate-100">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Municipio</p>
+                            <p class="font-bold text-brand-navy text-sm" id="viewMunicipio">—</p>
                         </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Puesto Asignado</label>
-                            <select id="modalPuesto" disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input appearance-none">
-                                <option value="">Seleccione...</option>
-                            </select>
+                        <div class="bg-white rounded-xl p-4 text-center shadow-sm border border-slate-100">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Puesto</p>
+                            <p class="font-bold text-brand-navy text-sm" id="viewPuesto">—</p>
                         </div>
-                        <div class="space-y-1.5">
-                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mesa a Vigilar</label>
-                            <select id="modalMesa" disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input appearance-none">
-                                <option value="">Seleccione...</option>
-                            </select>
+                        <div class="bg-white rounded-xl p-4 text-center shadow-sm border border-slate-100">
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1">Mesa</p>
+                            <p class="font-black text-brand-navy text-2xl" id="viewMesa">—</p>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
-        <!-- Footer -->
-        <div class="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
-            <button id="btnDeleteTestigo" onclick="deleteTestigo()" class="px-6 py-3 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all flex items-center gap-2 border border-transparent hover:border-red-100">
-                <span class="material-symbols-outlined text-sm">delete</span>Eliminar
-            </button>
-            <div class="flex gap-3">
-                <button onclick="closeTestigoModal()" class="px-6 py-3 text-sm font-bold text-slate-500 hover:bg-slate-200 bg-slate-100 rounded-xl transition-all">Cerrar</button>
-                <button id="btnSaveModal" onclick="saveTestigoModal()" class="hidden px-6 py-3 text-sm font-bold text-white bg-brand-navy hover:bg-slate-800 rounded-xl transition-all shadow-md items-center justify-center gap-2 flex">
-                    <span class="material-symbols-outlined text-sm">save</span>Guardar
-                </button>
+            </div>
+            <!-- View Footer -->
+            <div class="px-8 py-5 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                <button onclick="deleteTestigo()" class="text-sm font-semibold text-red-500 hover:text-red-700 hover:bg-red-50 px-4 py-2 rounded-xl transition-all flex items-center gap-1.5"><span class="material-symbols-outlined text-sm">delete</span>Eliminar</button>
+                <button onclick="closeTestigoModal()" class="px-6 py-2.5 text-sm font-bold text-slate-600 bg-white hover:bg-slate-100 rounded-xl transition-all border border-slate-200">Cerrar</button>
             </div>
         </div>
+
+        <!-- ===== EDIT MODE ===== -->
+        <div id="editMode" class="hidden">
+            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <h3 class="text-xl font-bold text-brand-navy flex items-center gap-2">
+                    <span class="material-symbols-outlined text-brand-gold">edit</span> Editar Testigo
+                </h3>
+                <button onclick="toggleEditMode()" class="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+            <div class="p-8 overflow-y-auto" style="max-height: 55vh;">
+                <form id="modalForm" class="space-y-6">
+                    <input type="hidden" id="modalId">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Cédula</label>
+                            <input type="text" id="modalCedula" readonly class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-brand-navy font-bold opacity-70">
+                            <p class="text-[10px] text-slate-400 ml-1">No editable (Credenciales de acceso)</p>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
+                            <input type="text" id="modalNombre" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 transition-all">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Celular</label>
+                            <input type="tel" id="modalTelefono" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 transition-all">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
+                            <input type="email" id="modalEmail" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 transition-all">
+                        </div>
+                    </div>
+                    <div class="pt-6 border-t border-slate-100">
+                        <h4 class="text-sm font-bold text-brand-navy mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-sm">assignment_ind</span>Asignación (Misión)</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="space-y-1.5">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Municipio Asignado</label>
+                                <select id="modalMuni" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 appearance-none"><option value="">Seleccione...</option></select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Puesto Asignado</label>
+                                <select id="modalPuesto" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 appearance-none"><option value="">Seleccione...</option></select>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mesa a Vigilar</label>
+                                <select id="modalMesa" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/10 appearance-none"><option value="">Seleccione...</option></select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+                <button id="btnDeleteTestigo" onclick="deleteTestigo()" class="px-6 py-3 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all flex items-center gap-2 border border-transparent hover:border-red-100">
+                    <span class="material-symbols-outlined text-sm">delete</span>Eliminar
+                </button>
+                <div class="flex gap-3">
+                    <button onclick="toggleEditMode()" class="px-6 py-3 text-sm font-bold text-slate-500 hover:bg-slate-200 bg-slate-100 rounded-xl transition-all">Cancelar</button>
+                    <button id="btnSaveModal" onclick="saveTestigoModal()" class="px-6 py-3 text-sm font-bold text-white bg-brand-navy hover:bg-slate-800 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">save</span>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -625,83 +683,76 @@ function showStatus(type, msg) {
 }
 
 // Modal Logic
+let currentTestigoData = null;
+
 async function openTestigoModal(id) {
     const t = allTestigos.find(x => x.id === id);
     if (!t) return;
-    document.getElementById('modalId').value = t.id;
-    document.getElementById('modalCedula').value = t.cedula;
-    document.getElementById('modalNombre').value = t.nombre;
-    document.getElementById('modalTelefono').value = t.telefono || '';
-    document.getElementById('modalEmail').value = t.email || '';
+    currentTestigoData = t;
 
-    // Copy options from main select
-    document.getElementById('modalMuni').innerHTML = document.getElementById('muniVota').innerHTML;
-    
-    if (t.puesto && t.puesto.municipio_id) {
-        document.getElementById('modalMuni').value = t.puesto.municipio_id;
-        const p = await loadPuestos(t.puesto.municipio_id);
-        fillPuestoSelect(document.getElementById('modalPuesto'), p);
-        document.getElementById('modalPuesto').value = t.puesto_id;
-        
-        const sel = document.getElementById('modalPuesto').selectedOptions[0];
-        const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
-        fillMesaSelect(document.getElementById('modalMesa'), mesas);
-        if (t.mesa) document.getElementById('modalMesa').value = t.mesa;
-    } else {
-        document.getElementById('modalMuni').value = '';
-        document.getElementById('modalPuesto').innerHTML = '<option value="">Seleccione...</option>';
-        document.getElementById('modalMesa').innerHTML = '<option value="">Seleccione...</option>';
-    }
+    // Populate VIEW mode
+    document.getElementById('viewAvatar').textContent = t.nombre.charAt(0).toUpperCase();
+    document.getElementById('viewNombre').textContent = t.nombre;
+    document.getElementById('viewCedula').textContent = t.cedula;
+    document.getElementById('viewTelefono').textContent = t.telefono || 'No registrado';
+    document.getElementById('viewEmail').textContent = t.email || 'No registrado';
+    document.getElementById('viewEstado').textContent = t.estado || 'Activo';
+    document.getElementById('viewMunicipio').textContent = t.puesto?.municipio?.nombre || 'Sin asignar';
+    document.getElementById('viewPuesto').textContent = t.puesto?.nombre_puesto || 'Sin asignar';
+    document.getElementById('viewMesa').textContent = t.mesa || '—';
 
-    setModalEditMode(false);
+    // Show view mode, hide edit mode
+    document.getElementById('viewMode').classList.remove('hidden');
+    document.getElementById('editMode').classList.add('hidden');
+
     document.getElementById('testigoModal').classList.remove('hidden');
 }
 
 function closeTestigoModal() {
     document.getElementById('testigoModal').classList.add('hidden');
-    setModalEditMode(false);
+    document.getElementById('viewMode').classList.remove('hidden');
+    document.getElementById('editMode').classList.add('hidden');
 }
 
-function toggleEditMode() {
-    setModalEditMode(!isModalEditing);
-}
+async function toggleEditMode() {
+    const viewMode = document.getElementById('viewMode');
+    const editMode = document.getElementById('editMode');
 
-function setModalEditMode(edit) {
-    isModalEditing = edit;
-    const inputs = document.querySelectorAll('.modal-input');
-    inputs.forEach(i => {
-        if (i.tagName === 'SELECT') {
-            // only enable if they have items or depending on cascade
-            if (edit) {
-                if (i.id === 'modalMuni') i.disabled = false;
-                if (i.id === 'modalPuesto' && document.getElementById('modalMuni').value) i.disabled = false;
-                if (i.id === 'modalMesa' && document.getElementById('modalPuesto').value) i.disabled = false;
-            } else {
-                i.disabled = true;
-            }
+    if (editMode.classList.contains('hidden')) {
+        // Switch to EDIT mode — populate form fields
+        const t = currentTestigoData;
+        if (!t) return;
+
+        document.getElementById('modalId').value = t.id;
+        document.getElementById('modalCedula').value = t.cedula;
+        document.getElementById('modalNombre').value = t.nombre;
+        document.getElementById('modalTelefono').value = t.telefono || '';
+        document.getElementById('modalEmail').value = t.email || '';
+
+        document.getElementById('modalMuni').innerHTML = document.getElementById('muniVota').innerHTML;
+
+        if (t.puesto && t.puesto.municipio_id) {
+            document.getElementById('modalMuni').value = t.puesto.municipio_id;
+            const p = await loadPuestos(t.puesto.municipio_id);
+            fillPuestoSelect(document.getElementById('modalPuesto'), p);
+            document.getElementById('modalPuesto').value = t.puesto_id;
+
+            const sel = document.getElementById('modalPuesto').selectedOptions[0];
+            const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
+            fillMesaSelect(document.getElementById('modalMesa'), mesas);
+            if (t.mesa) document.getElementById('modalMesa').value = t.mesa;
         } else {
-            i.readOnly = !edit;
-            if (edit) {
-                i.classList.replace('bg-slate-50', 'bg-white');
-                i.classList.add('focus:border-brand-gold', 'focus:ring-4', 'focus:ring-brand-gold/10');
-            } else {
-                i.classList.replace('bg-white', 'bg-slate-50');
-                i.classList.remove('focus:border-brand-gold', 'focus:ring-4', 'focus:ring-brand-gold/10');
-            }
+            document.getElementById('modalMuni').value = '';
+            document.getElementById('modalPuesto').innerHTML = '<option value="">Seleccione...</option>';
+            document.getElementById('modalMesa').innerHTML = '<option value="">Seleccione...</option>';
         }
-    });
 
-    const btnSave = document.getElementById('btnSaveModal');
-    const btnEdit = document.getElementById('btnEditModal');
-    
-    if (edit) {
-        btnSave.classList.remove('hidden');
-        btnEdit.classList.add('bg-brand-navy', 'text-white');
-        btnEdit.classList.remove('text-slate-400');
+        viewMode.classList.add('hidden');
+        editMode.classList.remove('hidden');
     } else {
-        btnSave.classList.add('hidden');
-        btnEdit.classList.remove('bg-brand-navy', 'text-white');
-        btnEdit.classList.add('text-slate-400');
+        // Switch back to VIEW mode
+        editMode.classList.add('hidden');
+        viewMode.classList.remove('hidden');
     }
 }
 
