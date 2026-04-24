@@ -49,7 +49,9 @@ const api = {
     },
     testigos: {
         list: (search) => fetchAPI(`/testigos${search ? '?search=' + encodeURIComponent(search) : ''}`),
-        create: (data) => fetchAPI('/testigos', { method: 'POST', body: JSON.stringify(data) })
+        create: (data) => fetchAPI('/testigos', { method: 'POST', body: JSON.stringify(data) }),
+        update: (id, data) => fetchAPI(`/testigos/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+        delete: (id) => fetchAPI(`/testigos/${id}`, { method: 'DELETE' })
     },
     alertas: {
         list: () => fetchAPI('/alertas'),

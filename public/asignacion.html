@@ -259,11 +259,95 @@
     </div>
 </div>
 </main>
+<!-- Modal Testigo -->
+<div id="testigoModal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-brand-navy/40 backdrop-blur-sm transition-opacity" onclick="closeTestigoModal()"></div>
+    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] md:w-full max-w-2xl bg-white rounded-[32px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <!-- Header -->
+        <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+            <h3 class="text-xl font-bold text-brand-navy flex items-center gap-2">
+                <span class="material-symbols-outlined text-brand-gold">badge</span>
+                Detalles del Testigo
+            </h3>
+            <div class="flex items-center gap-2">
+                <button id="btnEditModal" onclick="toggleEditMode()" class="p-2 text-slate-400 hover:text-brand-navy hover:bg-white rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200">
+                    <span class="material-symbols-outlined">edit</span>
+                </button>
+                <button onclick="closeTestigoModal()" class="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-xl transition-all shadow-sm border border-transparent hover:border-slate-200">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+        </div>
+        <!-- Body -->
+        <div class="p-8 overflow-y-auto flex-1">
+            <form id="modalForm" class="space-y-6">
+                <input type="hidden" id="modalId">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Cédula</label>
+                        <input type="text" id="modalCedula" readonly class="w-full px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl text-brand-navy font-bold opacity-70">
+                        <p class="text-[10px] text-slate-400 ml-1">No editable (Credenciales de acceso)</p>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Nombre Completo</label>
+                        <input type="text" id="modalNombre" readonly class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input transition-all">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Celular</label>
+                        <input type="tel" id="modalTelefono" readonly class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input transition-all">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Correo Electrónico</label>
+                        <input type="email" id="modalEmail" readonly class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input transition-all">
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-slate-100">
+                    <h4 class="text-sm font-bold text-brand-navy mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-sm">assignment_ind</span>Asignación (Misión)</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Municipio Asignado</label>
+                            <select id="modalMuni" disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input appearance-none">
+                                <option value="">Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Puesto Asignado</label>
+                            <select id="modalPuesto" disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input appearance-none">
+                                <option value="">Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Mesa a Vigilar</label>
+                            <select id="modalMesa" disabled class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-brand-navy font-medium outline-none modal-input appearance-none">
+                                <option value="">Seleccione...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- Footer -->
+        <div class="p-6 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+            <button id="btnDeleteTestigo" onclick="deleteTestigo()" class="px-6 py-3 text-sm font-bold text-red-600 hover:bg-red-50 rounded-xl transition-all flex items-center gap-2 border border-transparent hover:border-red-100">
+                <span class="material-symbols-outlined text-sm">delete</span>Eliminar
+            </button>
+            <div class="flex gap-3">
+                <button onclick="closeTestigoModal()" class="px-6 py-3 text-sm font-bold text-slate-500 hover:bg-slate-200 bg-slate-100 rounded-xl transition-all">Cerrar</button>
+                <button id="btnSaveModal" onclick="saveTestigoModal()" class="hidden px-6 py-3 text-sm font-bold text-white bg-brand-navy hover:bg-slate-800 rounded-xl transition-all shadow-md items-center justify-center gap-2 flex">
+                    <span class="material-symbols-outlined text-sm">save</span>Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="/js/api.js"></script>
 <script>
 let puestosCache = {}; // municipioId -> [puestos]
 let autoMode = true;
+let allTestigos = [];
+let isModalEditing = false;
 
 document.addEventListener('DOMContentLoaded', async () => {
     if (!api.auth.isAuthenticated()) { window.location.href = '/'; return; }
@@ -432,6 +516,32 @@ function setupEvents() {
         updateZonaInfo(sel, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
     });
 
+    // Modal muni/puesto changes
+    const modalMuni = document.getElementById('modalMuni');
+    const modalPuesto = document.getElementById('modalPuesto');
+    const modalMesa = document.getElementById('modalMesa');
+    
+    modalMuni.addEventListener('change', async (e) => {
+        const id = e.target.value;
+        if (id) {
+            const p = await loadPuestos(id);
+            fillPuestoSelect(modalPuesto, p);
+            modalPuesto.disabled = false;
+        } else {
+            modalPuesto.innerHTML = '<option value="">Seleccione...</option>';
+            modalPuesto.disabled = true;
+        }
+        modalMesa.innerHTML = '<option value="">Seleccione...</option>';
+        modalMesa.disabled = true;
+    });
+
+    modalPuesto.addEventListener('change', (e) => {
+        const sel = e.target.selectedOptions[0];
+        const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
+        fillMesaSelect(modalMesa, mesas);
+        modalMesa.disabled = mesas <= 0;
+    });
+
     // Search
     let searchTimeout;
     document.getElementById('searchInput').addEventListener('input', (e) => {
@@ -480,10 +590,11 @@ async function loadTestigos(search) {
     const c = document.getElementById('lista');
     const badge = document.getElementById('countBadge');
     if (res.success && res.data.length > 0) {
+        allTestigos = res.data;
         badge.textContent = res.data.length;
         c.innerHTML = res.data.map(t => `
-            <div class="flex items-start gap-3 p-3 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all">
-                <div class="w-9 h-9 bg-brand-navy/5 text-brand-navy rounded-xl flex items-center justify-center shrink-0 mt-0.5">
+            <div onclick="openTestigoModal('${t.id}')" class="flex items-start gap-3 p-3 rounded-2xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all cursor-pointer group">
+                <div class="w-9 h-9 bg-brand-navy/5 text-brand-navy rounded-xl flex items-center justify-center shrink-0 mt-0.5 group-hover:bg-brand-navy group-hover:text-white transition-colors">
                     <span class="material-symbols-outlined text-lg">person</span>
                 </div>
                 <div class="flex-1 min-w-0">
@@ -495,6 +606,7 @@ async function loadTestigos(search) {
             </div>
         `).join('');
     } else {
+        allTestigos = [];
         badge.textContent = '0';
         c.innerHTML = '<p class="text-center py-8 text-slate-400 text-sm">No se encontraron testigos.</p>';
     }
@@ -506,6 +618,146 @@ function showStatus(type, msg) {
     d.innerHTML = `<span class="material-symbols-outlined">${type === 'success' ? 'check_circle' : 'error'}</span><span>${msg}</span>`;
     d.classList.remove('hidden');
     setTimeout(() => d.classList.add('hidden'), 5000);
+}
+
+// Modal Logic
+async function openTestigoModal(id) {
+    const t = allTestigos.find(x => x.id === id);
+    if (!t) return;
+    document.getElementById('modalId').value = t.id;
+    document.getElementById('modalCedula').value = t.cedula;
+    document.getElementById('modalNombre').value = t.nombre;
+    document.getElementById('modalTelefono').value = t.telefono || '';
+    document.getElementById('modalEmail').value = t.email || '';
+
+    // Copy options from main select
+    document.getElementById('modalMuni').innerHTML = document.getElementById('muniVota').innerHTML;
+    
+    if (t.puesto && t.puesto.municipio_id) {
+        document.getElementById('modalMuni').value = t.puesto.municipio_id;
+        const p = await loadPuestos(t.puesto.municipio_id);
+        fillPuestoSelect(document.getElementById('modalPuesto'), p);
+        document.getElementById('modalPuesto').value = t.puesto_id;
+        
+        const sel = document.getElementById('modalPuesto').selectedOptions[0];
+        const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
+        fillMesaSelect(document.getElementById('modalMesa'), mesas);
+        if (t.mesa) document.getElementById('modalMesa').value = t.mesa;
+    } else {
+        document.getElementById('modalMuni').value = '';
+        document.getElementById('modalPuesto').innerHTML = '<option value="">Seleccione...</option>';
+        document.getElementById('modalMesa').innerHTML = '<option value="">Seleccione...</option>';
+    }
+
+    setModalEditMode(false);
+    document.getElementById('testigoModal').classList.remove('hidden');
+}
+
+function closeTestigoModal() {
+    document.getElementById('testigoModal').classList.add('hidden');
+    setModalEditMode(false);
+}
+
+function toggleEditMode() {
+    setModalEditMode(!isModalEditing);
+}
+
+function setModalEditMode(edit) {
+    isModalEditing = edit;
+    const inputs = document.querySelectorAll('.modal-input');
+    inputs.forEach(i => {
+        if (i.tagName === 'SELECT') {
+            // only enable if they have items or depending on cascade
+            if (edit) {
+                if (i.id === 'modalMuni') i.disabled = false;
+                if (i.id === 'modalPuesto' && document.getElementById('modalMuni').value) i.disabled = false;
+                if (i.id === 'modalMesa' && document.getElementById('modalPuesto').value) i.disabled = false;
+            } else {
+                i.disabled = true;
+            }
+        } else {
+            i.readOnly = !edit;
+            if (edit) {
+                i.classList.replace('bg-slate-50', 'bg-white');
+                i.classList.add('focus:border-brand-gold', 'focus:ring-4', 'focus:ring-brand-gold/10');
+            } else {
+                i.classList.replace('bg-white', 'bg-slate-50');
+                i.classList.remove('focus:border-brand-gold', 'focus:ring-4', 'focus:ring-brand-gold/10');
+            }
+        }
+    });
+
+    const btnSave = document.getElementById('btnSaveModal');
+    const btnEdit = document.getElementById('btnEditModal');
+    
+    if (edit) {
+        btnSave.classList.remove('hidden');
+        btnEdit.classList.add('bg-brand-navy', 'text-white');
+        btnEdit.classList.remove('text-slate-400');
+    } else {
+        btnSave.classList.add('hidden');
+        btnEdit.classList.remove('bg-brand-navy', 'text-white');
+        btnEdit.classList.add('text-slate-400');
+    }
+}
+
+async function saveTestigoModal() {
+    const id = document.getElementById('modalId').value;
+    const btn = document.getElementById('btnSaveModal');
+    const data = {
+        nombre: document.getElementById('modalNombre').value,
+        telefono: document.getElementById('modalTelefono').value,
+        email: document.getElementById('modalEmail').value || null,
+        puesto_id: document.getElementById('modalPuesto').value,
+        mesa: document.getElementById('modalMesa').value ? parseInt(document.getElementById('modalMesa').value) : null
+    };
+
+    if (!data.puesto_id) {
+        alert("Debe asignar un puesto válido.");
+        return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">refresh</span>Guardando...';
+    
+    try {
+        const res = await api.testigos.update(id, data);
+        if (res.success) {
+            showStatus('success', 'Testigo actualizado correctamente');
+            closeTestigoModal();
+            await loadTestigos(document.getElementById('searchInput').value);
+        } else {
+            alert(res.message || 'Error al actualizar');
+        }
+    } catch (e) {
+        alert('Error de conexión');
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm">save</span>Guardar';
+}
+
+async function deleteTestigo() {
+    if (!confirm('¿Estás SEGURO de eliminar a este testigo? Esta acción eliminará su registro y sus accesos al sistema y no se puede deshacer.')) return;
+    
+    const id = document.getElementById('modalId').value;
+    const btn = document.getElementById('btnDeleteTestigo');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">refresh</span>Borrando...';
+    
+    try {
+        const res = await api.testigos.delete(id);
+        if (res.success) {
+            showStatus('success', 'Testigo eliminado correctamente');
+            closeTestigoModal();
+            await loadTestigos(document.getElementById('searchInput').value);
+        } else {
+            alert(res.message || 'Error al eliminar');
+        }
+    } catch (e) {
+        alert('Error de conexión');
+    }
+    btn.disabled = false;
+    btn.innerHTML = '<span class="material-symbols-outlined text-sm">delete</span>Eliminar';
 }
 </script>
 </body>
