@@ -5,20 +5,26 @@ const router = express.Router();
 
 const CANDIDATOS = [
   { key: 'votos_cepeda', nombre: 'Iván Cepeda' },
+  { key: 'votos_clara', nombre: 'Clara López' },
   { key: 'votos_claudia', nombre: 'Claudia López' },
   { key: 'votos_botero', nombre: 'Santiago Botero' },
   { key: 'votos_espriella', nombre: 'Abelardo de la Espriella' },
   { key: 'votos_lizcano', nombre: 'Mauricio Lizcano' },
+  { key: 'votos_miguel_uribe', nombre: 'Miguel Uribe' },
   { key: 'votos_macollins', nombre: 'Sondra Macollins' },
+  { key: 'votos_roy', nombre: 'Roy Barreras' },
   { key: 'votos_caicedo', nombre: 'Carlos Caicedo' },
+  { key: 'votos_matamoros', nombre: 'Gustavo Matamoros' },
   { key: 'votos_paloma', nombre: 'Paloma Valencia' },
+  { key: 'votos_fajardo', nombre: 'Sergio Fajardo' },
   { key: 'votos_murillo', nombre: 'Luis Gilberto Murillo' }
 ];
 
 // POST /api/resultados — Upsert resultado por puesto+mesa+fuente
 router.post('/', authMiddleware, async (req, res) => {
-  const { puesto_id, mesa, fuente, votos_espriella, votos_paloma, votos_cepeda,
-    votos_claudia, votos_lizcano, votos_murillo, votos_caicedo, votos_macollins, votos_botero,
+  const { puesto_id, mesa, fuente, votos_cepeda, votos_clara, votos_claudia, votos_botero,
+    votos_espriella, votos_lizcano, votos_miguel_uribe, votos_macollins, votos_roy,
+    votos_caicedo, votos_matamoros, votos_paloma, votos_fajardo, votos_murillo,
     votos_blanco, votos_nulos, votos_no_marcados, votos_total } = req.body;
 
   if (!puesto_id || !mesa || !fuente) {
@@ -30,15 +36,20 @@ router.post('/', authMiddleware, async (req, res) => {
 
   try {
     const data = {
-      votos_espriella: parseInt(votos_espriella) || 0,
-      votos_paloma: parseInt(votos_paloma) || 0,
       votos_cepeda: parseInt(votos_cepeda) || 0,
+      votos_clara: parseInt(votos_clara) || 0,
       votos_claudia: parseInt(votos_claudia) || 0,
-      votos_lizcano: parseInt(votos_lizcano) || 0,
-      votos_murillo: parseInt(votos_murillo) || 0,
-      votos_caicedo: parseInt(votos_caicedo) || 0,
-      votos_macollins: parseInt(votos_macollins) || 0,
       votos_botero: parseInt(votos_botero) || 0,
+      votos_espriella: parseInt(votos_espriella) || 0,
+      votos_lizcano: parseInt(votos_lizcano) || 0,
+      votos_miguel_uribe: parseInt(votos_miguel_uribe) || 0,
+      votos_macollins: parseInt(votos_macollins) || 0,
+      votos_roy: parseInt(votos_roy) || 0,
+      votos_caicedo: parseInt(votos_caicedo) || 0,
+      votos_matamoros: parseInt(votos_matamoros) || 0,
+      votos_paloma: parseInt(votos_paloma) || 0,
+      votos_fajardo: parseInt(votos_fajardo) || 0,
+      votos_murillo: parseInt(votos_murillo) || 0,
       votos_blanco: parseInt(votos_blanco) || 0,
       votos_nulos: parseInt(votos_nulos) || 0,
       votos_no_marcados: parseInt(votos_no_marcados) || 0,
