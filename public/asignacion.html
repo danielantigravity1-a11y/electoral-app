@@ -151,6 +151,23 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5 hidden" id="infoZonaVotaContainer">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Zona (División Registraduría)</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                                <span class="material-symbols-outlined text-slate-400">map</span>
+                                <input type="text" id="zonaVota" readonly placeholder="-" class="w-full bg-transparent outline-none text-brand-navy font-bold">
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Ubicación</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl">
+                                <span class="material-symbols-outlined text-slate-400">landscape</span>
+                                <input type="text" id="ubicacionVota" readonly placeholder="-" class="w-full bg-transparent outline-none text-brand-navy font-bold">
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- BLOQUE 3: Asignación -->
@@ -194,6 +211,23 @@
                                 <select id="mesaDest" disabled class="w-full bg-transparent outline-none text-brand-navy font-medium appearance-none">
                                     <option value="">Autocompletado</option>
                                 </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5 hidden" id="infoZonaDestContainer">
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Zona Destino</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl opacity-60" id="cZonaDest">
+                                <span class="material-symbols-outlined text-slate-400">map</span>
+                                <input type="text" id="zonaDest" readonly placeholder="-" class="w-full bg-transparent outline-none text-brand-navy font-bold">
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider ml-1">Ubicación Destino</label>
+                            <div class="flex items-center gap-3 px-4 py-3 bg-slate-100 border border-slate-200 rounded-2xl opacity-60" id="cUbiDest">
+                                <span class="material-symbols-outlined text-slate-400">landscape</span>
+                                <input type="text" id="ubicacionDest" readonly placeholder="-" class="w-full bg-transparent outline-none text-brand-navy font-bold">
                             </div>
                         </div>
                     </div>
@@ -263,7 +297,24 @@ async function loadPuestos(muniId) {
 }
 
 function fillPuestoSelect(selectEl, puestos) {
-    selectEl.innerHTML = '<option value="">Seleccione puesto...</option>' + puestos.map(p => `<option value="${p.id}" data-mesas="${p.mesas || 0}">${p.nombre_puesto} (Zona ${p.zona})</option>`).join('');
+    selectEl.innerHTML = '<option value="">Seleccione puesto...</option>' + puestos.map(p => `<option value="${p.id}" data-mesas="${p.mesas || 0}" data-zona="${p.zona || ''}">${p.nombre_puesto}</option>`).join('');
+}
+
+function updateZonaInfo(sel, zonaInputId, ubiInputId, containerId) {
+    const container = document.getElementById(containerId);
+    const zonaInput = document.getElementById(zonaInputId);
+    const ubiInput = document.getElementById(ubiInputId);
+    
+    if (sel && sel.value) {
+        const zona = sel.dataset.zona;
+        zonaInput.value = zona;
+        ubiInput.value = (zona === '99') ? 'Rural' : 'Urbana';
+        container.classList.remove('hidden');
+    } else {
+        zonaInput.value = '';
+        ubiInput.value = '';
+        container.classList.add('hidden');
+    }
 }
 
 function fillMesaSelect(selectEl, count) {
@@ -295,10 +346,21 @@ function setupEvents() {
             const p = await loadPuestos(id);
             fillPuestoSelect(puestoVota, p);
             puestoVota.disabled = false;
-            if (autoMode) { muniDest.value = id; const p2 = await loadPuestos(id); fillPuestoSelect(puestoDest, p2); }
+            updateZonaInfo(null, 'zonaVota', 'ubicacionVota', 'infoZonaVotaContainer');
+            if (autoMode) { 
+                muniDest.value = id; 
+                fillPuestoSelect(puestoDest, p); 
+                updateZonaInfo(null, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
+            }
         } else {
             puestoVota.innerHTML = '<option value="">Seleccione municipio</option>';
-            if (autoMode) { muniDest.value = ''; puestoDest.innerHTML = '<option value="">Autocompletado</option>'; mesaDest.innerHTML = '<option value="">Autocompletado</option>'; }
+            updateZonaInfo(null, 'zonaVota', 'ubicacionVota', 'infoZonaVotaContainer');
+            if (autoMode) { 
+                muniDest.value = ''; 
+                puestoDest.innerHTML = '<option value="">Autocompletado</option>'; 
+                mesaDest.innerHTML = '<option value="">Autocompletado</option>'; 
+                updateZonaInfo(null, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
+            }
         }
     });
 
@@ -308,9 +370,11 @@ function setupEvents() {
         const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
         fillMesaSelect(mesaVota, mesas);
         mesaVota.disabled = mesas <= 0;
+        updateZonaInfo(sel, 'zonaVota', 'ubicacionVota', 'infoZonaVotaContainer');
         if (autoMode) {
             puestoDest.value = e.target.value;
             fillMesaSelect(mesaDest, mesas);
+            updateZonaInfo(sel, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
         }
     });
 
@@ -319,13 +383,12 @@ function setupEvents() {
         if (autoMode) mesaDest.value = e.target.value;
     });
 
-    // Toggle auto/manual
     toggle.addEventListener('change', (e) => {
         autoMode = e.target.checked;
-        const destContainers = [document.getElementById('cMuniDest'), document.getElementById('cPuestoDest'), document.getElementById('cMesaDest')];
+        const destContainers = [document.getElementById('cMuniDest'), document.getElementById('cPuestoDest'), document.getElementById('cMesaDest'), document.getElementById('cZonaDest'), document.getElementById('cUbiDest')];
         if (autoMode) {
             muniDest.disabled = true; puestoDest.disabled = true; mesaDest.disabled = true;
-            destContainers.forEach(c => { c.classList.add('bg-slate-100', 'opacity-60'); c.classList.remove('bg-slate-50'); });
+            destContainers.forEach(c => { if(c) { c.classList.add('bg-slate-100', 'opacity-60'); c.classList.remove('bg-slate-50'); } });
             // Copy current values
             muniDest.value = muniVota.value;
             if (muniVota.value) {
@@ -336,11 +399,14 @@ function setupEvents() {
                     const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
                     fillMesaSelect(mesaDest, mesas);
                     mesaDest.value = mesaVota.value;
+                    updateZonaInfo(sel, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
                 });
+            } else {
+                updateZonaInfo(null, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
             }
         } else {
             muniDest.disabled = false; puestoDest.disabled = false; mesaDest.disabled = false;
-            destContainers.forEach(c => { c.classList.remove('bg-slate-100', 'opacity-60'); c.classList.add('bg-slate-50'); });
+            destContainers.forEach(c => { if(c) { c.classList.remove('bg-slate-100', 'opacity-60'); c.classList.add('bg-slate-50'); } });
         }
     });
 
@@ -348,7 +414,14 @@ function setupEvents() {
     muniDest.addEventListener('change', async (e) => {
         if (autoMode) return;
         const id = e.target.value;
-        if (id) { const p = await loadPuestos(id); fillPuestoSelect(puestoDest, p); puestoDest.disabled = false; }
+        if (id) { 
+            const p = await loadPuestos(id); 
+            fillPuestoSelect(puestoDest, p); 
+            puestoDest.disabled = false; 
+            updateZonaInfo(null, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
+        } else {
+            updateZonaInfo(null, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
+        }
     });
     puestoDest.addEventListener('change', (e) => {
         if (autoMode) return;
@@ -356,6 +429,7 @@ function setupEvents() {
         const mesas = sel ? parseInt(sel.dataset.mesas) || 0 : 0;
         fillMesaSelect(mesaDest, mesas);
         mesaDest.disabled = mesas <= 0;
+        updateZonaInfo(sel, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
     });
 
     // Search
@@ -392,6 +466,8 @@ function setupEvents() {
                 mesaVota.innerHTML = '<option value="">Seleccione puesto</option>';
                 puestoDest.innerHTML = '<option value="">Autocompletado</option>';
                 mesaDest.innerHTML = '<option value="">Autocompletado</option>';
+                updateZonaInfo(null, 'zonaVota', 'ubicacionVota', 'infoZonaVotaContainer');
+                updateZonaInfo(null, 'zonaDest', 'ubicacionDest', 'infoZonaDestContainer');
                 await loadTestigos();
             } else { showStatus('error', res.message || 'Error al registrar'); }
         } catch (err) { showStatus('error', 'Error de conexión'); }
