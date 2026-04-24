@@ -28,23 +28,30 @@
 <body class="bg-brand-light font-sans text-brand-navy min-h-screen flex flex-col">
 
     <!-- Header Móvil -->
-    <header class="bg-brand-navy text-white px-6 py-5 flex justify-between items-center sticky top-0 z-20 shadow-lg">
-        <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
-                <span class="material-symbols-outlined text-brand-gold">how_to_reg</span>
+    <header class="bg-brand-navy text-white px-6 py-5 flex justify-between items-center sticky top-0 z-20 shadow-lg relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay"></div>
+        <div class="absolute -right-10 -top-10 w-32 h-32 bg-brand-gold/10 rounded-full blur-2xl"></div>
+        <div class="flex items-center gap-3 relative z-10">
+            <div class="w-10 h-10 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center border border-white/10">
+                <span class="material-symbols-outlined text-brand-gold">shield</span>
             </div>
             <div>
-                <h1 class="text-lg font-bold leading-tight">Portal Testigo</h1>
-                <p class="text-[10px] uppercase tracking-widest text-brand-gold font-bold" id="userName">Cargando...</p>
+                <h1 class="text-lg font-black leading-tight tracking-tight">Defensores de la Patria</h1>
+                <p class="text-[9px] uppercase tracking-widest text-brand-gold font-bold">Firmes con la Patria</p>
             </div>
         </div>
-        <button onclick="logout()" class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white hover:bg-white/20 transition-colors">
+        <button onclick="logout()" class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-white hover:bg-white/20 transition-colors relative z-10">
             <span class="material-symbols-outlined">logout</span>
         </button>
     </header>
 
     <!-- Main Content -->
     <main class="flex-1 p-6 space-y-6 overflow-y-auto">
+        <div class="text-center mb-2">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">Elecciones 2026</p>
+            <h2 class="text-xl font-black text-brand-navy">Primera Vuelta Presidencial</h2>
+        </div>
+
         <!-- Tarjeta de Asignación -->
         <div class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-brand-gold"></div>
@@ -70,6 +77,87 @@
                 <p class="text-red-100 text-sm mt-1">Radicar una anomalía oficial (Cód. Electoral)</p>
             </div>
         </button>
+
+        <!-- Tarjeta Reportar Resultados -->
+        <div class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-500 to-teal-500"></div>
+            <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <span class="material-symbols-outlined text-emerald-500 text-lg">how_to_vote</span>
+                Resultados de mi Mesa
+            </h2>
+            <p class="text-xs text-slate-500 mb-4">Ingrese los resultados finales del conteo de su mesa. Esta información es confidencial y prioritaria.</p>
+            
+            <form id="resultadosForm" class="space-y-4">
+                <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Nuestro Candidato</label>
+                    <div class="flex items-center justify-between gap-3">
+                        <span class="font-bold text-brand-navy">Abelardo de la Espriella</span>
+                        <input type="number" id="votos_espriella" min="0" class="w-24 bg-white border border-brand-gold/50 rounded-xl px-3 py-2 text-brand-navy font-black text-lg text-center focus:border-brand-gold focus:ring-2 focus:ring-brand-gold/20 outline-none" required placeholder="0">
+                    </div>
+                </div>
+
+                <div class="space-y-3 pt-2">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Otros Candidatos (Principales)</p>
+                    
+                    <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <span class="font-medium text-slate-600 text-sm">Paloma Valencia</span>
+                        <input type="number" id="votos_paloma" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
+                    </div>
+                    
+                    <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <span class="font-medium text-slate-600 text-sm">Iván Cepeda</span>
+                        <input type="number" id="votos_cepeda" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <span class="font-medium text-slate-600 text-sm">Luis Gilberto Murillo</span>
+                        <input type="number" id="votos_murillo" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <span class="font-medium text-slate-600 text-sm">Carlos Caicedo</span>
+                        <input type="number" id="votos_caicedo" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <span class="font-medium text-slate-600 text-sm">Mauricio Lizcano</span>
+                        <input type="number" id="votos_lizcano" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" placeholder="0">
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <span class="font-medium text-slate-600 text-sm">Sondra Macollins</span>
+                        <input type="number" id="votos_macollins" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" placeholder="0">
+                    </div>
+
+                    <div class="flex items-center justify-between gap-3 bg-white p-3 rounded-xl border border-slate-100">
+                        <span class="font-medium text-slate-600 text-sm">Santiago Botero</span>
+                        <input type="number" id="votos_botero" min="0" class="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">En Blanco</label>
+                        <input type="number" id="votos_blanco" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Nulos</label>
+                        <input type="number" id="votos_nulos" min="0" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-brand-navy font-bold text-center outline-none focus:border-emerald-400" required placeholder="0">
+                    </div>
+                </div>
+
+                <div class="pt-3">
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1 text-center">Total Sufragantes</label>
+                    <input type="number" id="votos_total" min="0" class="w-full bg-slate-100 border border-slate-300 rounded-xl px-4 py-3 text-brand-navy font-black text-xl text-center outline-none focus:border-emerald-400" required placeholder="0">
+                </div>
+
+                <button type="submit" id="btnEnviarResultados" class="w-full mt-4 bg-gradient-to-r from-emerald-500 to-teal-600 active:from-emerald-600 active:to-teal-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 transition-all">
+                    <span class="material-symbols-outlined">send</span>
+                    <span>Guardar Resultados</span>
+                </button>
+                <div id="resultadosMsg" class="hidden text-center text-sm font-medium p-3 rounded-xl mt-2"></div>
+            </form>
+        </div>
 
         <!-- Tarjeta Subir E-14 -->
         <div class="bg-white rounded-3xl p-6 shadow-card border border-slate-100 relative overflow-hidden">
@@ -497,6 +585,57 @@
                 console.error('Error al cargar historial E-14:', e);
             }
         }
+
+        // ---- Resultados Logic ----
+        document.getElementById('resultadosForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnEnviarResultados');
+            const msg = document.getElementById('resultadosMsg');
+            
+            if(!testigoInfo || !testigoInfo.puesto_id) {
+                alert('No puede reportar resultados sin un puesto asignado.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span><span>Guardando...</span>';
+            msg.classList.add('hidden');
+
+            const data = {
+                puesto_id: testigoInfo.puesto_id,
+                mesa: testigoInfo.mesa || '1',
+                fuente: 'TESTIGO',
+                votos_espriella: document.getElementById('votos_espriella').value,
+                votos_paloma: document.getElementById('votos_paloma').value,
+                votos_cepeda: document.getElementById('votos_cepeda').value,
+                votos_murillo: document.getElementById('votos_murillo').value,
+                votos_caicedo: document.getElementById('votos_caicedo').value,
+                votos_lizcano: document.getElementById('votos_lizcano').value || 0,
+                votos_macollins: document.getElementById('votos_macollins').value || 0,
+                votos_botero: document.getElementById('votos_botero').value || 0,
+                votos_blanco: document.getElementById('votos_blanco').value,
+                votos_nulos: document.getElementById('votos_nulos').value,
+                votos_total: document.getElementById('votos_total').value
+            };
+
+            try {
+                const res = await api.resultados.save(data);
+                if (res.success) {
+                    msg.innerHTML = '<span class="material-symbols-outlined align-middle mr-1">check_circle</span> Resultados guardados exitosamente. ¡Gracias!';
+                    msg.className = 'text-center text-sm font-bold text-emerald-700 bg-emerald-100 p-3 rounded-xl mt-4 border border-emerald-200';
+                } else {
+                    msg.innerHTML = '<span class="material-symbols-outlined align-middle mr-1">error</span> ' + (res.message || 'Error al guardar');
+                    msg.className = 'text-center text-sm font-bold text-red-700 bg-red-100 p-3 rounded-xl mt-4 border border-red-200';
+                }
+            } catch (err) {
+                msg.innerHTML = '<span class="material-symbols-outlined align-middle mr-1">wifi_off</span> Error de conexión';
+                msg.className = 'text-center text-sm font-bold text-red-700 bg-red-100 p-3 rounded-xl mt-4 border border-red-200';
+            } finally {
+                msg.classList.remove('hidden');
+                btn.disabled = false;
+                btn.innerHTML = '<span class="material-symbols-outlined">send</span><span>Guardar Resultados</span>';
+            }
+        });
 
         cargarAsignacion();
         cargarHistorialE14();

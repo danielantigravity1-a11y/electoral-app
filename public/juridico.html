@@ -22,11 +22,16 @@
 
 <!-- Sidebar -->
 <aside class="w-72 bg-white border-r border-slate-100 flex flex-col h-screen hidden md:flex shrink-0 z-20">
-    <div class="p-8 flex items-center gap-4">
-        <div class="w-12 h-12 bg-brand-navy rounded-2xl flex items-center justify-center shadow-lg shadow-brand-navy/20">
+    <div class="p-8 flex items-center gap-4 bg-brand-navy relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay"></div>
+        <div class="absolute -right-10 -top-10 w-32 h-32 bg-brand-gold/10 rounded-full blur-2xl"></div>
+        <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10 shadow-lg relative z-10">
             <span class="material-symbols-outlined text-brand-gold">shield</span>
         </div>
-        <div><h1 class="text-lg font-bold text-brand-navy">Defensores</h1><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Plataforma</p></div>
+        <div class="relative z-10">
+            <h1 class="text-sm font-black text-white leading-tight">Defensores de la Patria</h1>
+            <p class="text-[9px] font-bold text-brand-gold uppercase tracking-widest">Firmes con la Patria</p>
+        </div>
     </div>
     <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
         <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-2">Menú</p>
@@ -88,6 +93,116 @@
             </div>
         </section>
 
+        <!-- Comparación de Resultados -->
+        <section>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-bold flex items-center gap-2"><span class="material-symbols-outlined text-brand-gold">balance</span>Comparación de Resultados (E-14)</h2>
+            </div>
+            
+            <div class="bg-white rounded-3xl border border-slate-100 shadow-card overflow-hidden flex flex-col md:flex-row min-h-[500px]">
+                
+                <!-- Columna Izquierda: Ingreso de Datos -->
+                <div class="w-full md:w-1/3 bg-slate-50 border-r border-slate-100 p-6 flex flex-col">
+                    <h3 class="font-bold text-brand-navy mb-1">Ingreso Manual</h3>
+                    <p class="text-xs text-slate-500 mb-6">Digite los resultados oficiales para compararlos con los de nuestros testigos.</p>
+                    
+                    <form id="formIngresoResultado" class="space-y-4 flex-1">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Puesto de Votación</label>
+                            <select id="selectPuestoComp" class="w-full bg-white border border-slate-200 rounded-xl py-3 px-3 text-sm font-semibold outline-none focus:border-brand-gold" onchange="cargarComparacionPuesto()">
+                                <option value="">Seleccione Puesto</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Mesa</label>
+                                <input type="number" id="inputMesaComp" min="1" class="w-full bg-white border border-slate-200 rounded-xl py-3 px-3 text-sm font-semibold outline-none focus:border-brand-gold" required placeholder="Nro">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Fuente</label>
+                                <select id="selectFuenteComp" class="w-full bg-white border border-slate-200 rounded-xl py-3 px-3 text-sm font-semibold outline-none focus:border-brand-gold" required>
+                                    <option value="PRECONTEO">Preconteo</option>
+                                    <option value="TRANSMISION">Transmisión (E-14)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3 pt-2 border-t border-slate-200">
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-bold text-xs text-brand-navy">Abelardo de la Espriella</span>
+                                <input type="number" id="votos_espriella_c" min="0" class="w-20 bg-white border border-brand-gold/50 rounded-lg px-2 py-1.5 font-bold text-center outline-none" required>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-xs text-slate-600">Paloma Valencia</span>
+                                <input type="number" id="votos_paloma_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-xs text-slate-600">Iván Cepeda</span>
+                                <input type="number" id="votos_cepeda_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-xs text-slate-600">Luis G. Murillo</span>
+                                <input type="number" id="votos_murillo_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-xs text-slate-600">Carlos Caicedo</span>
+                                <input type="number" id="votos_caicedo_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-xs text-slate-600">Mauricio Lizcano</span>
+                                <input type="number" id="votos_lizcano_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-xs text-slate-600">Sondra Macollins</span>
+                                <input type="number" id="votos_macollins_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
+                            </div>
+                            <div class="flex items-center justify-between gap-2">
+                                <span class="font-medium text-xs text-slate-600">Santiago Botero</span>
+                                <input type="number" id="votos_botero_c" min="0" class="w-16 bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center outline-none" required>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-2 mt-2">
+                                <div><label class="text-[9px] font-bold text-slate-400">BLANCOS</label><input type="number" id="votos_blanco_c" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center" required></div>
+                                <div><label class="text-[9px] font-bold text-slate-400">NULOS</label><input type="number" id="votos_nulos_c" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-sm text-center" required></div>
+                            </div>
+                            <div>
+                                <label class="text-[9px] font-bold text-slate-400">TOTAL</label>
+                                <input type="number" id="votos_total_c" class="w-full bg-slate-100 border border-slate-200 rounded-lg px-2 py-2 font-bold text-center" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="btnGuardarResComp" class="w-full bg-brand-navy hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition-colors shadow-lg mt-4 flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined">save</span> Guardar Datos
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Columna Derecha: Tabla Comparativa -->
+                <div class="w-full md:w-2/3 bg-white p-6 flex flex-col">
+                    <h3 class="font-bold text-brand-navy mb-1">Mesa a Mesa</h3>
+                    <p class="text-xs text-slate-500 mb-6">Comparación automática de las 3 fuentes para detectar fraude o discrepancias.</p>
+                    
+                    <div class="flex-1 overflow-auto bg-slate-50 rounded-2xl border border-slate-100">
+                        <table class="w-full text-left text-sm whitespace-nowrap">
+                            <thead class="bg-slate-100/50 sticky top-0 border-b border-slate-200">
+                                <tr>
+                                    <th class="py-3 px-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Mesa</th>
+                                    <th class="py-3 px-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Testigo</th>
+                                    <th class="py-3 px-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Preconteo</th>
+                                    <th class="py-3 px-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Transmisión</th>
+                                    <th class="py-3 px-4 font-bold text-slate-500 uppercase tracking-widest text-[10px]">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaComparacion" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="py-10 text-center text-slate-400">Seleccione un Puesto de Votación para ver las mesas</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
         <!-- Mesas con Alertas agrupadas por Puesto -->
         <section>
             <h2 class="text-lg font-bold mb-4 flex items-center gap-2"><span class="material-symbols-outlined text-red-400">warning</span>Mesas con Alertas por Puesto</h2>
@@ -129,7 +244,121 @@ async function cargarTodo() {
     if (!res.success) return;
     allAlertas = res.data;
     renderAlertasAgrupadas();
+
+    // Populate selectPuestoComp
+    const selPuesto = document.getElementById('selectPuestoComp');
+    selPuesto.innerHTML = '<option value="">Seleccione Puesto</option>';
+    if (mid) {
+        const pRes = await api.divipole.getPuestos(mid);
+        if (pRes.success) {
+            pRes.data.forEach(p => {
+                const o = document.createElement('option');
+                o.value = p.id;
+                o.textContent = p.nombre_puesto;
+                selPuesto.appendChild(o);
+            });
+        }
+    }
 }
+
+// ---- LOGICA DE COMPARACION DE RESULTADOS ----
+async function cargarComparacionPuesto() {
+    const puesto_id = document.getElementById('selectPuestoComp').value;
+    const tbody = document.getElementById('tablaComparacion');
+    if (!puesto_id) {
+        tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-slate-400">Seleccione un Puesto de Votación</td></tr>';
+        return;
+    }
+
+    tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-slate-400"><span class="material-symbols-outlined animate-spin text-2xl">refresh</span></td></tr>';
+    
+    try {
+        const res = await api.resultados.comparar(puesto_id);
+        if (res.success) {
+            if (res.data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-slate-400">No hay mesas registradas en este puesto aún</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = res.data.map(m => {
+                const isError = m.discrepancia;
+                const statusColor = isError ? 'text-red-600 bg-red-100' : (m.fuentesCount >= 2 ? 'text-green-600 bg-green-100' : 'text-slate-600 bg-slate-100');
+                const statusIcon = isError ? 'warning' : (m.fuentesCount >= 2 ? 'check_circle' : 'pending');
+                const statusText = isError ? 'DISCREPANCIA' : (m.fuentesCount >= 2 ? 'OK' : 'INCOMPLETO');
+
+                const t = m.fuentes['TESTIGO'];
+                const p = m.fuentes['PRECONTEO'];
+                const tr = m.fuentes['TRANSMISION'];
+
+                return `
+                <tr class="${isError ? 'bg-red-50/50' : 'hover:bg-slate-50'} transition-colors">
+                    <td class="py-3 px-4 font-black text-brand-navy">Mesa ${m.mesa}</td>
+                    <td class="py-3 px-4 text-xs">
+                        ${t ? `<span class="font-bold">E:${t.votos_espriella}</span> | P:${t.votos_paloma} | C:${t.votos_cepeda} | <span class="text-slate-400">Tot:${t.votos_total}</span>` : '<span class="text-slate-300">-</span>'}
+                    </td>
+                    <td class="py-3 px-4 text-xs">
+                        ${p ? `<span class="font-bold">E:${p.votos_espriella}</span> | P:${p.votos_paloma} | C:${p.votos_cepeda} | <span class="text-slate-400">Tot:${p.votos_total}</span>` : '<span class="text-slate-300">-</span>'}
+                    </td>
+                    <td class="py-3 px-4 text-xs">
+                        ${tr ? `<span class="font-bold">E:${tr.votos_espriella}</span> | P:${tr.votos_paloma} | C:${tr.votos_cepeda} | <span class="text-slate-400">Tot:${tr.votos_total}</span>` : '<span class="text-slate-300">-</span>'}
+                    </td>
+                    <td class="py-3 px-4">
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${statusColor}">
+                            <span class="material-symbols-outlined text-[14px]">${statusIcon}</span> ${statusText}
+                        </span>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="5" class="py-10 text-center text-red-500 font-bold">Error de conexión</td></tr>';
+    }
+}
+
+document.getElementById('formIngresoResultado').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btnGuardarResComp');
+    const puesto_id = document.getElementById('selectPuestoComp').value;
+    
+    if(!puesto_id) { alert('Seleccione un puesto'); return; }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Guardando...';
+
+    const data = {
+        puesto_id,
+        mesa: document.getElementById('inputMesaComp').value,
+        fuente: document.getElementById('selectFuenteComp').value,
+        votos_espriella: document.getElementById('votos_espriella_c').value,
+        votos_paloma: document.getElementById('votos_paloma_c').value,
+        votos_cepeda: document.getElementById('votos_cepeda_c').value,
+        votos_murillo: document.getElementById('votos_murillo_c').value,
+        votos_caicedo: document.getElementById('votos_caicedo_c').value,
+        votos_lizcano: document.getElementById('votos_lizcano_c').value || 0,
+        votos_macollins: document.getElementById('votos_macollins_c').value || 0,
+        votos_botero: document.getElementById('votos_botero_c').value || 0,
+        votos_blanco: document.getElementById('votos_blanco_c').value,
+        votos_nulos: document.getElementById('votos_nulos_c').value,
+        votos_total: document.getElementById('votos_total_c').value
+    };
+
+    try {
+        const res = await api.resultados.save(data);
+        if (res.success) {
+            alert('Datos guardados correctamente.');
+            // Refrescar tabla si es que ese mismo puesto está seleccionado
+            cargarComparacionPuesto();
+        } else {
+            alert(res.message || 'Error al guardar');
+        }
+    } catch (err) {
+        alert('Error de conexión');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined">save</span> Guardar Datos';
+    }
+});
+
 
 function renderAlertasAgrupadas() {
     const container = document.getElementById('alertasAgrupadas');

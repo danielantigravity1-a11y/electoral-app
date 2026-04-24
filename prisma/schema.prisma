@@ -52,6 +52,7 @@ model Divipole {
   testigos_votantes  Testigo[]  @relation("PuestoVotacion")
   alertas        AlertasMesa[]
   actas_e14      ActaE14[]
+  resultados     ResultadosMesa[]
 
   @@unique([municipio_id, zona, codigo_puesto])
 }
@@ -142,4 +143,34 @@ enum EstadoE14 {
   Recibida
   Procesada_OCR
   Error_Lectura
+}
+
+model ResultadosMesa {
+  id                    String          @id @default(uuid())
+  puesto_id             String
+  puesto                Divipole        @relation(fields: [puesto_id], references: [id])
+  mesa                  Int
+  fuente                FuenteResultado
+  votos_espriella       Int             @default(0)
+  votos_paloma          Int             @default(0)
+  votos_cepeda          Int             @default(0)
+  votos_lizcano         Int             @default(0)
+  votos_murillo         Int             @default(0)
+  votos_caicedo         Int             @default(0)
+  votos_macollins       Int             @default(0)
+  votos_botero          Int             @default(0)
+  votos_blanco          Int             @default(0)
+  votos_nulos           Int             @default(0)
+  votos_total           Int             @default(0)
+  registrado_por        String?
+  created_at            DateTime        @default(now())
+  updated_at            DateTime        @updatedAt
+
+  @@unique([puesto_id, mesa, fuente])
+}
+
+enum FuenteResultado {
+  TESTIGO
+  PRECONTEO
+  TRANSMISION
 }

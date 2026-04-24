@@ -30,6 +30,7 @@ const comisionRoutes = require('./routes/comision.routes');
 const usuariosRoutes = require('./routes/usuarios.routes');
 const reportesRoutes = require('./routes/reportes.routes');
 const e14Routes = require('./routes/e14.routes');
+const resultadosRoutes = require('./routes/resultados.routes');
 
 // Rutas de la API
 app.use('/api/auth', authRoutes);
@@ -40,6 +41,7 @@ app.use('/api/comisiones', comisionRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/reportes', reportesRoutes);
 app.use('/api/e14', e14Routes);
+app.use('/api/resultados', resultadosRoutes);
 
 // Manejo de errores global
 app.use((err, req, res, next) => {

@@ -74,6 +74,12 @@ const api = {
         upload: (data) => fetchAPI('/e14/upload', { method: 'POST', body: JSON.stringify(data) }),
         misActas: () => fetchAPI('/e14/mis-actas'),
         todas: () => fetchAPI('/e14/todas')
+    },
+    resultados: {
+        save: (data) => fetchAPI('/resultados', { method: 'POST', body: JSON.stringify(data) }),
+        get: (puesto_id, mesa) => fetchAPI(`/resultados?puesto_id=${puesto_id}${mesa ? '&mesa=' + mesa : ''}`),
+        comparar: (puesto_id) => fetchAPI(`/resultados/comparar?puesto_id=${puesto_id}`),
+        resumen: (municipio_id) => fetchAPI(`/resultados/resumen${municipio_id ? '?municipio_id=' + municipio_id : ''}`)
     }
 };
 
