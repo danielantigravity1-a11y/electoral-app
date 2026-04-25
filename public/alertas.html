@@ -24,54 +24,39 @@
 <body class="bg-brand-light font-sans text-brand-navy min-h-screen flex overflow-hidden">
 
     <!-- Sidebar -->
-    <aside class="w-72 bg-white border-r border-slate-100 flex flex-col h-screen hidden md:flex shrink-0 relative z-20">
-        <div class="p-8 flex items-center gap-4 bg-brand-navy relative overflow-hidden border-b border-slate-50">
-            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay"></div>
-            <div class="absolute -right-10 -top-10 w-32 h-32 bg-brand-gold/10 rounded-full blur-2xl"></div>
-            <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10 shadow-lg relative z-10">
-                <span class="material-symbols-outlined text-brand-gold">shield</span>
-            </div>
-            <div class="relative z-10">
-                <h1 class="text-sm font-black text-white leading-tight">Defensores de la Patria</h1>
-                <p class="text-[9px] font-bold text-brand-gold uppercase tracking-widest">Firmes con la Patria</p>
-            </div>
+<div id="mobileOverlay" class="fixed inset-0 bg-brand-navy/50 backdrop-blur-sm z-40 hidden md:hidden" onclick="toggleSidebar()"></div>
+<aside id="sidebar" class="fixed md:sticky top-0 left-0 w-[85vw] md:w-72 bg-white border-r border-slate-100 flex flex-col h-screen z-50 transition-transform -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none shrink-0">
+    <div class="p-8 flex items-center gap-4 bg-brand-navy relative overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 mix-blend-overlay"></div>
+        <div class="absolute -right-10 -top-10 w-32 h-32 bg-brand-gold/10 rounded-full blur-2xl"></div>
+        <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10 shadow-lg relative z-10">
+            <span class="material-symbols-outlined text-brand-gold">shield</span>
         </div>
-
-        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
-            <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-2">Menú</p>
-            <a href="/dashboard.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">grid_view</span>Dashboard</a>
-            <a href="/asignacion.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">how_to_reg</span>Asignación</a>
-            <a href="/comision.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">gavel</span>Comisión Escrutadora</a>
-            <a href="/alertas.html" class="flex items-center gap-4 px-4 py-3.5 bg-slate-50 text-brand-navy rounded-2xl transition-all group border border-slate-100 shadow-sm relative overflow-hidden">
-                <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-gold rounded-r"></div>
-                <span class="material-symbols-outlined group-hover:scale-110 transition-transform text-brand-gold">campaign</span>
-                <span class="font-semibold text-sm">Alertas y Reclamaciones</span>
-            </a>
-            <a href="/juridico.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">balance</span>Panel Jurídico</a>
-            <a href="/usuarios.html" id="menu-usuarios" class="hidden flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 rounded-2xl font-medium transition-all"><span class="material-symbols-outlined">group</span>Usuarios</a>
-        </nav>
-
-        <div class="p-6 border-t border-slate-100">
-            <div class="bg-slate-50 rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
-                <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center font-bold text-brand-navy" id="userAvatar">A</div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold text-brand-navy truncate" id="userName">Admin</p>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate" id="userRole">Rol</p>
-                </div>
-            </div>
-            <button onclick="api.auth.logout(); window.location.href='/'" class="w-full mt-4 flex items-center gap-3 px-4 py-3 text-slate-500 rounded-2xl hover:bg-red-50 hover:text-red-600 transition-all group">
-                <span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">logout</span>
-                <span class="font-semibold text-sm">Cerrar Sesión</span>
-            </button>
+        <div class="relative z-10 flex-1">
+            <h1 class="text-sm font-black text-white leading-tight">Defensores de la Patria</h1>
+            <p class="text-[9px] font-bold text-brand-gold uppercase tracking-widest">Firmes con la Patria</p>
         </div>
-    </aside>
+        <button onclick="toggleSidebar()" class="md:hidden text-white/50 hover:text-white absolute top-4 right-4"><span class="material-symbols-outlined">close</span></button>
+    </div>
+    <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+        <p class="px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-4 mt-2">Menú</p>
+        \n        <a href="/dashboard.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-brand-navy rounded-2xl transition-all group">\n            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">grid_view</span><span class="font-medium text-sm">Dashboard</span>\n        </a>\n        <a href="/asignacion.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-brand-navy rounded-2xl transition-all group">\n            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">how_to_reg</span><span class="font-medium text-sm">Asignación</span>\n        </a>\n        <a href="/comision.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-brand-navy rounded-2xl transition-all group">\n            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">gavel</span><span class="font-medium text-sm">Comisión Escrutadora</span>\n        </a>\n        <a href="/alertas.html" class="flex items-center gap-4 px-4 py-3.5 bg-slate-50 text-brand-navy rounded-2xl transition-all group border border-slate-100 shadow-sm relative overflow-hidden">\n            <div class="absolute left-0 top-0 bottom-0 w-1 bg-brand-gold rounded-r"></div>\n            <span class="material-symbols-outlined group-hover:scale-110 transition-transform text-brand-gold">campaign</span><span class="font-semibold text-sm">Alertas y Reclamaciones</span>\n        </a>\n        <a href="/juridico.html" class="flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-brand-navy rounded-2xl transition-all group">\n            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">balance</span><span class="font-medium text-sm">Panel Jurídico</span>\n        </a>\n        <a href="/usuarios.html" id="menu-usuarios" class="hidden flex items-center gap-4 px-4 py-3.5 text-slate-500 hover:bg-slate-50 hover:text-brand-navy rounded-2xl transition-all group">\n            <span class="material-symbols-outlined group-hover:scale-110 transition-transform">group</span><span class="font-medium text-sm">Usuarios</span>\n        </a>
+    </nav>
+    <div class="p-6 border-t border-slate-100">
+        <div class="bg-slate-50 rounded-2xl p-4 flex items-center gap-3 border border-slate-100">
+            <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center font-bold text-brand-navy" id="userAvatar">A</div>
+            <div class="flex-1 min-w-0"><p class="text-sm font-bold truncate text-brand-navy" id="userName">Admin</p><p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" id="userRole">Rol</p></div>
+        </div>
+        <button onclick="api.auth.logout();window.location.href='/'" class="w-full mt-4 flex items-center gap-3 px-4 py-3 text-slate-500 rounded-2xl hover:bg-red-50 hover:text-red-600 transition-all group"><span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">logout</span><span class="font-semibold text-sm">Cerrar Sesión</span></button>
+    </div>
+</aside>
 
     <!-- Main Content -->
     <main class="flex-1 flex flex-col h-screen overflow-hidden relative">
         <header class="bg-white/80 backdrop-blur-xl border-b border-slate-100 sticky top-0 z-10 px-8 py-6 flex justify-between items-center">
             <div>
                 <div class="flex items-center gap-2 text-sm font-semibold text-slate-400 mb-1">
-                    <span class="material-symbols-outlined text-lg">home</span>
+                    <a href="/dashboard.html" class="material-symbols-outlined text-lg hover:text-brand-navy transition-colors">home</a>
                     <span class="material-symbols-outlined text-lg">chevron_right</span>
                     <span>Legal</span>
                 </div>
